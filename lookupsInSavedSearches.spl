@@ -1,1 +1,5 @@
-T%6.4`(G5E@>$Rcm9tVs!2
+| rest /servicesNS/-/-/saved/searches 
+| rename eai:acl.* as * 
+| search disabled=0 search=*lookup*
+| rex field=search "(inputlookup|lookup)\s+(?<lookup>\w+)"
+| stats values(lookup) as lookupsUsed by title search app
