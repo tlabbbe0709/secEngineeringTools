@@ -1,0 +1,4 @@
+| rest splunk_server=* /services/apps/local  
+| fillnull update.version version value="N/A"  
+| stats values(splunk_server) as instances by title version update.version
+

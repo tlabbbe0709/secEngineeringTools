@@ -1,5 +1,0 @@
-```saved searches```
-| rest /servicesNS/-/-/saved/searches
-
-```Splunk Messages```
-| rest /services/messages

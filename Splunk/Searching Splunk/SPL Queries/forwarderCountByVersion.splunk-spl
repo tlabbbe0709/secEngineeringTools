@@ -1,4 +1,4 @@
-```Forwarder versions count by version```
+```Forwarder count by version```
 index=_internal source=*metrics.log group=tcpin_connections earliest=-7d@d
 | eval sourceHost=if(isnull(hostname), sourceHost,hostname) 
 | rename connectionType as connectType
@@ -12,17 +12,3 @@ index=_internal source=*metrics.log group=tcpin_connections earliest=-7d@d
 | eval verLabel = majorVersion + "." + minorVersion + "." + "x"
 | fields verLabel hostCount
 | sort + verLabel
-
-```License use over time```
-(index=_internal source=*license_usage.log* type="RolloverSummary" earliest=-30d@d) 
-| eval _time=('_time' - 43200) 
-| bin _time span=1d 
-| stats latest(b) AS b by slave, pool, _time 
-| timechart span=1d sum(b) AS b fixedrange=false 
-| eval gb=round(b/1024/1024/1024,2) | fields _time gb
-
-```Display Current Splunk Messages```
-| rest /services/messages
-| rename eai:acl.* as * 
-| search app=* author=* 
-| stats coun tby title message severity

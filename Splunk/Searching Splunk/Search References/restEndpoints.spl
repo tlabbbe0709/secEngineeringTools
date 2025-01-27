@@ -1,0 +1,11 @@
+```saved searches```
+| rest /servicesNS/-/-/saved/searches
+
+```Splunk Messages```
+| rest /services/messages
+
+```apps```
+| rest /services/apps/local
+
+```users```
+| rest /servicesNS/-/-/admin/users 

@@ -1,0 +1,7 @@
+```License use over time```
+(index=_internal source=*license_usage.log* type="RolloverSummary" earliest=-30d@d) 
+| eval _time=('_time' - 43200) 
+| bin _time span=1d 
+| stats latest(b) AS b by slave, pool, _time 
+| timechart span=1d sum(b) AS b fixedrange=false 
+| eval gb=round(b/1024/1024/1024,2) | fields _time gb
