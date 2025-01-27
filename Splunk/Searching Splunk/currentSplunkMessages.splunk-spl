@@ -1,0 +1,5 @@
+```Display Current Splunk Messages```
+| rest /services/messages
+| rename eai:acl.* as * 
+| search app=* author=* 
+| stats coun tby title message severity
