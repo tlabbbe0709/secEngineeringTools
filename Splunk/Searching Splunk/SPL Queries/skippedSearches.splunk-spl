@@ -1,0 +1,2 @@
+index=_internal sourcetype=scheduler 
+| stats count by status reason
