@@ -1,0 +1,2 @@
+(index=_audit info=completed action=search user!="splunk-system-user") 
+| timechart dc(user) as "Distinct Users"

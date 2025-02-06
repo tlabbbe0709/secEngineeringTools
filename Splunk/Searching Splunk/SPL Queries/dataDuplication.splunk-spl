@@ -1,0 +1,3 @@
+index=* earliest=-7d latest=now
+| stats count by _raw index sourcetype source host
+| search count>2 

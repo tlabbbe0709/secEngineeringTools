@@ -1,0 +1,7 @@
+index=* earliest=-30d@d latest=+7d
+| eval diffInSecs=_time-_indextime
+| eval diffInMins=diffInSecs/60
+| eval idxTime=strftime(_indextime,"%c")
+| convert ctime(_time)
+| eval status=case(diffInMins<10 AND diffInMins>-10,"Normal",diffInMins>10,"Futuristic",diffInMins<-10,"Latent")
+| table _time idxTime diffInSecs diffInMins status
