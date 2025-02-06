@@ -1,0 +1,2 @@
+| rest /servicesNS/-/-/admin/users splunk_server=*
+| stats count by splunk_server type
