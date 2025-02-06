@@ -1,0 +1,4 @@
+index=_audit action="login attempt" earliest=-90d
+| stats latest(_time) as lastTime by user 
+| where lastTime<now()-2592000
+| convert ctime(_time)
