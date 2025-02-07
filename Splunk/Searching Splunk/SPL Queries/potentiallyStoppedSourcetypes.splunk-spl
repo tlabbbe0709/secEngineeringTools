@@ -1,8 +1,10 @@
 | metadata type=sourcetypes index=*
 | eval timeSince=now()-recentTime,
-eval status=case(timeSince>86400 AND timeSince<=604800,"Greater than 24h Delay", timeSince>604800 AND timeSince<=2592000, "Greater than 1 Week Delay",timeSince>2592000, "Greater than 1 Month Delay",1==1,"Okay"),
-eval firstTime=strftime(firstTime,"%c"),
-eval recentTime=strftime(recentTime,"%c"),
-eval timeSince=tostring(timeSince,"duration")
-| search status="Okay"
+status=case(timeSince>86400 AND timeSince<=604800,"Greater than 24h Delay", timeSince>604800 AND timeSince<=2592000, "Greater than 1 Week Delay",timeSince>2592000, "Greater than 1 Month Delay",timeSince>7776000, "Expired",timeSince<86400,"Okay"),
+firstTime=strftime(firstTime,"%c"),
+recentTime=strftime(recentTime,"%c"),
+timeSince=tostring(timeSince,"duration")
+| search NOT status IN ("Okay","Expired")
 | table firstTime recentTime timeSince sourcetype totalCount status
+
+ 
