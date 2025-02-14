@@ -1,0 +1,2 @@
+index=_internal "has reached maxKBps. As a result, data forwarding may be throttled" sourcetype=splunkd
+| stats count by host

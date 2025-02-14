@@ -1,0 +1,8 @@
+| rest /services/data/inputs/all/
+| rename eai:* as * 
+| stats count by type location host index 
+
+```
+You can replace the stats with the below table command to see individual inputs.
+| table `type location host index id title
+```
