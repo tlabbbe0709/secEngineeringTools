@@ -4,6 +4,7 @@
 | bin _time span=1d 
 | stats latest(b) AS b by slave, pool, _time 
 | timechart span=1d sum(b) AS b fixedrange=false 
-| eval gb=round(b/1024/1024/1024,2) | fields _time gb
+| eval gb=round(b/1024/1024/1024,2) 
+| fields _time gb
 
 

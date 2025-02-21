@@ -1,0 +1,15 @@
+index=_internal splunk_server_group=dmc_group_license_master source=*license_usage.log* type="Usage" 
+| eval h=if(len(h)=0 OR isnull(h),"(SQUASHED)",h) 
+| eval s=if(len(s)=0 OR isnull(s),"(SQUASHED)",s) 
+| eval idx=if(len(idx)=0 OR isnull(idx),"(UNKNOWN)",idx) 
+| bin _time span=1d 
+| stats sum(b) as b by _time, host, pool, s, st, h, idx 
+| search 
+    [| rest splunk_server=* /services/licenser/stacks 
+    | where label != "IT Service Intelligence Internals *DO NOT COPY*" 
+    | rename title as stack_id 
+    | join type=inner stack_id 
+        [| rest splunk_server=* /services/licenser/pools ] 
+    | rename description as pool 
+    | fields pool] 
+| stats  sum(b) AS volumeB by h

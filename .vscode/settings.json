@@ -1,6 +1,0 @@
-{
-    "splunk.spl2.acceptedTerms": "accepted",
-    "splunk.commands.splunkRestUrl": "https://3.17.146.121:8089",
-    "splunk.commands.token": "eyJraWQiOiJzcGx1bmsuc2VjcmV0IiwiYWxnIjoiSFM1MTIiLCJ2ZXIiOiJ2MiIsInR0eXAiOiJzdGF0aWMifQ.eyJpc3MiOiJhZG1pbiBmcm9tIGlwLTE3Mi0zMS0yMi0xOCIsInN1YiI6ImFkbWluIiwiYXVkIjoidnNDb2RlIiwiaWRwIjoiU3BsdW5rIiwianRpIjoiN2M1YWU0Mzk1ZmQ0N2RlZTQ5ZTgyZjMyZmMwN2U4ZTU1MDgzNWEyODJmODZkMjZiOTYxMzkyZDAxMjg2YTdkZSIsImlhdCI6MTc0MDA5MDU0MywiZXhwIjoxNzQwMDkwNzIzLCJuYnIiOjE3NDAwOTA1NDN9.6SkWgV3qrdiIvWkPGqEdUmjrS9UEND-WtxKAiMNuTbyc_sVVDyuVoGbqVoRZ2ngdmf2iahOXAl_HVALGf6tOgQ",
-    "splunk.reports.SplunkSearchHead": "https://3.17.146.121:8089"
-}

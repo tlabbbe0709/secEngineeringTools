@@ -1,0 +1,21 @@
+index=_internal splunk_server_group=dmc_group_license_master source=*license_usage.log* type="RolloverSummary" earliest=-30d@d pool="*" 
+| eval _time=_time - 43200 
+| bin _time span=1d 
+| stats latest(b) AS b by slave, pool, _time 
+| timechart span=1d sum(b) AS "volume" fixedrange=false 
+| join type=outer _time 
+    [ search index=_internal splunk_server_group=dmc_group_license_master source=*license_usage.log* type="RolloverSummary" earliest=-30d@d * 
+    | search 
+        [| rest splunk_server_group=dmc_group_license_master /services/licenser/stacks 
+        | where label != "IT Service Intelligence Internals *DO NOT COPY*" 
+        | rename title as stack_id 
+        | join type=inner stack_id 
+            [| rest splunk_server_group=dmc_group_license_masterservices/licenser/pools ] 
+        | rename description as pool 
+        | fields pool] 
+    | eval _time=_time - 43200 
+    | bin _time span=1d 
+    | stats latest(poolsz) AS "pool size" by _time] 
+| fields - _timediff 
+| foreach "*" 
+    [ eval <<FIELD>>=round('<<FIELD>>'/1024/1024/1024, 3)]
