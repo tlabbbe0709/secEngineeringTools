@@ -1,0 +1,15 @@
+| localop 
+``` Obtain a list of all datamodels ```
+| datamodelsimple
+``` Remove unwanted DMs```
+| regex datamodel!="Application_State|Change_Analysis|Databases|Event_Signatures|internal|Interprocess|JVM|Splunk"
+| map maxsearches=100 search="| datamodelsimple type=objects datamodel=$datamodel$ | eval DM=\"$datamodel$\""
+``` Use dedup to only query the top level object of each DM ```
+| dedup DM
+``` Join the DM and top level object for use in tstats ```
+| eval dmname=DM.".".object
+``` table the datamodel and composite for use with tstats command ```
+| table DM dmname
+``` Obtain a list of sourcetypes for accelerated datamodels ``` 
+| map maxsearches=100 search="| tstats summariesonly=t count from datamodel=\"$dmname$\" by sourcetype | eval DM=\"$DM$\""
+| stats values(sourcetype) AS sourcetypes by DM

@@ -1,0 +1,11 @@
+| rest /servicesNS/-/-/data/ui/views  splunk_server=local 
+| rename eai:acl.* AS * eai:* AS * 
+| table app owner id data title label description  
+| rex max_match=0 field=data "<query>(?P<search_used>.*)</query>"
+| rex max_match=0 field=data "<title>(?P<title_used>.*)</title>"
+| search search_used!="" AND title_used!="" 
+| regex title_used!="\$"
+| search owner!="nobody"
+| mvexpand title_used
+| stats count(title_used) AS count values(title_used) AS names by title owner  
+| sort - count

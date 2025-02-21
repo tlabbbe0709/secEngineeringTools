@@ -1,0 +1,3 @@
+| rest /services/storage/passwords splunk_server=local
+| rename eai:acl.* AS *
+| table app title author clear_password

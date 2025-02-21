@@ -1,0 +1,9 @@
+| rest /services/apps/local splunk_server=local
+``` Remove cloud internal apps, standard apps ```
+| regex version="[0-9]"
+``` Remove pre-installed apps w/current Splunk Cloud version ``` 
+| regex version!="9.2.2406.113"
+``` Remove ES apps and others managed by Splunk Cloud ```
+| regex title!="DA-ESS-[AEINT]|SA-[AEINTU]|SplunkEnterpriseSecurity|upgrade|mission|studio|cloud_admin|^dynamic|scsaudit|splunk_[agimprs]|splunkclouduf|splunk-visual"
+| table label version update.version
+| sort title 

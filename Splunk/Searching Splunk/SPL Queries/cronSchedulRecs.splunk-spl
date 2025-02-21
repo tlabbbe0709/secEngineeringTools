@@ -1,0 +1,13 @@
+| rest /servicesNS/-/-/saved/searches splunk_server=local 
+| search is_scheduled=1 disabled=0
+| rename eai:acl.app AS app
+``` Exclude Splunk standard apps, show only custom created searches ``` 
+| regex app!="InfoSec|splunk_archiver|maxmind|instrumentation|monitoring|nextcloud|rapid|TA-Zscaler"
+``` Exclude searches running every minute, top of the hour ```
+| regex cron_schedule!="\*/1 \* \* \* \*|^0|\* \* \* \* \*|\*/2"
+| regex cron_schedule="^\*"
+``` Create random offset for scheduling ```
+| eval rand=(random() % 4) + 1
+| rex field=cron_schedule "\*(?<new_cron>.*)"
+| eval new_cron=rand.new_cron 
+| table title cron_schedule new_cron

@@ -1,0 +1,19 @@
+```Compare DS forwarders against forwarders reporting into Splunk Cloud indexers.
+Obtain a list of forwarders from the DS, save output to a csv file```
+| rest /services/deployment/server/clients splunk_server=local 
+``` Set the hostname as the instanceName where they differ as collection uses instanceName ```
+| eval hostname=if(hostname==instanceName,hostname,instanceName)
+| table hostname instanceName ip splunkVersion utsname
+
+
+````Import the csv file, create lookup table in Splunk Cloud.  Compare DS to forwarders.```
+
+| inputlookup ds_fwd_list.csv 
+| eval type="ds"  
+| eval hostname=upper(hostname)
+| table hostname ip type
+| append [ search index=_internal hostname=* fwdType=* | regex hostname!="splunkcloud" | eval hostname=upper(hostname)
+| stats count by hostname sourceIp | eval type="cloud" | rename sourceIp AS ip | fields - count | sort hostname]
+| sort hostname
+| stats values(ip) AS ip, values(type) AS type count by hostname 
+| where count=1 

@@ -1,0 +1,8 @@
+| rest splunk_server=local /servicesNS/-/-/admin/datamodel-files
+| join title type=left
+	[ | search index=_internal sourcetype=scheduler search_type=datamodel_acceleration
+	| rex field=savedsearch_name "_ACCELERATE_DM_(Splunk_SA_CIM_|DA-ESS-ThreatIntelligence_|SA-NetworkProtection_)(?<dm>.*)_ACCELERATE_"
+	| rename dm as title, _time as search_time]
+| table title acceleration acceleration.cron_schedule acceleration.earliest_time acceleration.max_concurrent acceleration.max_time status scheduled_time run_time result_count search_time
+| convert ctime(search_time)
+| search acceleration=1
