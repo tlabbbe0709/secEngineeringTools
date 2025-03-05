@@ -1,0 +1,3 @@
+| metadata type=hosts index=*
+| convert ctime(firstTime) ctime(recentTime)
+| fields host firstTime recentTime totalCount

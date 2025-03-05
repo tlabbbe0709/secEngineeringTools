@@ -1,0 +1,1 @@
+$SPLUNK_HOME/bin/splunk cmd btprobe -d $SPLUNK_DB/fishbucket/splunk_private_db --file $filePath

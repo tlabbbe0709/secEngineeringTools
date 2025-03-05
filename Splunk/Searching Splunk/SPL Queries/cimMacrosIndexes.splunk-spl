@@ -1,0 +1,7 @@
+| rest splunk_server=local servicesNS/-/-/admin/macros
+| rename eai:acl.* as * 
+| search title=*cim*indexes* app=Splunk_SA_Cim
+| fields title definition
+| eval definition=split(definition,"OR")
+| rex field=definition "index(=| =|= | = )(?<indexes>\w+)"
+| fields title indexes

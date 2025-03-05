@@ -9,3 +9,5 @@
 
 ```users```
 | rest /servicesNS/-/-/admin/users 
+
+| rest splunk_server=local servicesNS/-/-/admin/macros
