@@ -1,0 +1,22 @@
+index=* tag=authentication
+| fillnull * value="EMPTY"
+| stats 
+count as total
+count(eval(isnull(action))) as action_nullCount 
+count(eval(isnull(app))) as app_nullCount 
+count(eval(isnull(authentication_method))) as authentication_method_nullCount 
+count(eval(isnull(authentication_service))) as authentication_service_nullCount 
+count(eval(isnull(dest))) as dest_nullCount 
+count(eval(isnull(src))) as src_nullCount 
+count(eval(isnull(duration))) as duration_nullCount 
+count(eval(isnull(reason))) as reason_nullCount 
+count(eval(isnull(response_time))) as response_time_nullCount 
+count(eval(isnull(signature))) as signature_nullCount 
+count(eval(isnull(signature_id))) as signature_id_nullCount 
+count(eval(isnull(tag))) as tag_nullCount 
+count(eval(isnull(user))) as user_nullCount 
+count(eval(isnull(user_agent))) as user_agent_nullCount 
+by index sourcetype
+| foreach *_nullCount
+[| eval <<FIELD>>_cimCompliance%=(<<FIELD>>-total)/total]
+| fields index sourcetype *_cimCompliance%
