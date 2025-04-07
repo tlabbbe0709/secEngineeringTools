@@ -1,0 +1,4 @@
+| rest /servicesNS/-/-/data/ui/views
+| rename eai:acl.* as *, eai:* as *
+| rex field=data "\<query\>(?<query>[^+\<\/]+)\<\/query\>"
+| fields app owner data query

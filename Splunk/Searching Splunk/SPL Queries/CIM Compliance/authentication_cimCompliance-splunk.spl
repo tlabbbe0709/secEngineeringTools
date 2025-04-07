@@ -1,3 +1,4 @@
+```This one mostly bad```
 index=* tag=authentication
 | fillnull * value="EMPTY"
 | stats 
@@ -20,3 +21,20 @@ by index sourcetype
 | foreach *_nullCount
 [| eval <<FIELD>>_cimCompliance%=(<<FIELD>>-total)/total]
 | fields index sourcetype *_cimCompliance%
+
+| tstats fillnull_value="unknown" summariesonly=true
+    values(Authentication.action) as action
+    values(Authentication.app) as app
+    values(Authentication.authentication_method) as authentication_method
+    values(Authentication.authentication_service) as authentication_service
+    values(Authentication.dest) as dest
+    values(Authentication.src) as src
+    values(Authentication.duration) as duration
+    values(Authentication.reason) as reason
+    values(Authentication.response_time) as response_time
+    values(Authentication.signature) as signature
+    values(Authentication.signature_id) as signature_id
+    values(Authentication.user) as user
+    values(Authentication.user_agent) as user_agent
+    from datamodel=Authentication
+    by index sourcetype

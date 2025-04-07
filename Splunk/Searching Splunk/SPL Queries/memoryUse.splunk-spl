@@ -1,0 +1,8 @@
+| rest /services/server/status/resource-usage/hostwide 
+| eval
+mem_used_pct = round((mem_used/mem)*100 , 2), 
+mem_used = tostring(round(mem_used/1024, 3),"commas"), 
+mem = tostring(round(mem/1024, 0),"commas") 
+| fields splunk_server, mem, mem_used, mem_used_pct 
+| sort  - mem_used_pct 
+| rename splunk_server AS "Splunk Server", mem AS "Memory Capacity (GB)", mem_used AS "Memory Used (GB)", mem_used_pct AS "Memory Used (%)"

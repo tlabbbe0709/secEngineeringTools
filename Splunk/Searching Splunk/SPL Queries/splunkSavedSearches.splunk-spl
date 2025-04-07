@@ -1,0 +1,8 @@
+| rest /servicesNS/-/-/saved/searches splunk_server=*
+| rename eai:acl.* as *
+| search disabled=0 
+| fields title search owner app
+| rex field=search "index(=|\s=|\s=\s|=\s)(?<index>[^+\s]+)"
+| rex field=search "sourcetype(=|\s=|\s=\s|=\s)(?<sourcetype>[^+\s]+)"
+| rex field=search "source(=|\s=|\s=\s|=\s)(?<source>[^+\s]+)"
+ 

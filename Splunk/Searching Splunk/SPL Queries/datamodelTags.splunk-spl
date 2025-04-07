@@ -1,0 +1,25 @@
+`cim_Endpoint_indexes` tag IN (listening, port, process, report, service, endpoint, filesystem, registry) 
+| eval datamodel=Enpoint
+| fields index sourcetype tag datamodel
+| append  
+    [ | search `cim_Change_indexes` tag IN (change, audit, endpoint, network, account, instance)
+        | eval datamodel="Change"
+        | fields index sourcetype tag datamodel]
+|append
+    [ | search `cim_Authentication_indexes` tag IN (authentication, default, cleartext, insecure, privileged)
+        | eval datamodel="Authentication"
+        | fields index sourcetype tag datamodel]
+| append
+    [ | search `cim_Network_Sessions_indexes` tag IN (network, session)
+        | eval datamodel="Network Sessions"
+        | fields index sourcetype tag datamodel]
+|append
+    [ | search `cim_Email_indexes` tag IN (email, delivery, content, filter)
+    Alerts
+        |eval datamodel="Email"
+        | fields index sourcetype tag datamodel]
+| append 
+    [ | search `cim_Alerts_indexes` tag=alert
+        | eval datamodel="alert"
+        | fields index sourcetype tag datamodel]
+| stats values(tag) values(datamodel) by index sourcetype

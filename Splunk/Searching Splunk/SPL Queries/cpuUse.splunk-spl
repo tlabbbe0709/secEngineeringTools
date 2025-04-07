@@ -1,0 +1,6 @@
+| rest /services/server/status/resource-usage/hostwide splunk_server=*
+| eval cpu_count = if(isnull(cpu_count), "N/A", cpu_count), 
+cpu_usage = (cpu_system_pct + cpu_user_pct)
+| fields splunk_server, cpu_count, cpu_usage
+| sort - cpu_usage
+| rename splunk_server AS "Splunk Server", cpu_count AS "CPU Cores", cpu_usage AS "CPU Used (%)"

@@ -1,4 +1,4 @@
-| rest /servicesNS/-/-/data/ui/views  splunk_server=local 
+| rest /servicesNS/-/-/data/ui/views  splunk_server=* 
 | rename eai:acl.* AS * eai:* AS * 
 | table app owner id data title label description  
 | rex max_match=0 field=data "<query>(?P<search_used>.*)</query>"

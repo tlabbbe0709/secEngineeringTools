@@ -1,4 +1,6 @@
 | rest splunk_server=* /services/apps/local  
 | fillnull update.version version value="N/A"  
+| eval updateAvailable=if(isnull('update.version'),"0","1")
+| sort - updateAvailable
 | stats values(splunk_server) as instances by title version update.version
 
