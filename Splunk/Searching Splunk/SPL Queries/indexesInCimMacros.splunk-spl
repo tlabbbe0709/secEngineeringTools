@@ -1,0 +1,8 @@
+|  rest /servicesNS/-/-/admin/macros
+| search title=cim_*_indexes
+| fields title definition
+| eval indexesUsed=split(definition,"OR")
+| mvexpand indexesUsed
+| rex field=indexesUsed "index(=\s|=)(?<index>\w+)"
+| search indexesUsed!="()"
+| stats values(title) by index
