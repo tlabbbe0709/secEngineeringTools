@@ -1,0 +1,23 @@
+| datamodel Authentication | spath 
+| spath path=objects{}.fields{} output=v 
+| spath path=objects{}.calculations{}.outputFields{} output=u 
+| eval w=mvappend(v,u) 
+| fields - _raw 
+| fields modelName w
+| mvexpand w 
+| eval field=json_extract(w,"fieldName")
+| table field
+| join field
+    [search `cim_Authentication_indexes` tag=authentication
+| head 10000
+| fieldsummary maxvals=15
+| eventstats max(count) AS total 
+| eval percent_coverage=round(count/total*100, 2) 
+| table field, percent_coverage, distinct_count, total, values
+| eval datamodel="Authentication"
+| spath input=values 
+| rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
+| fillnull value=0 percent_coverage, distinct_value_count, total_events]
+| eval status=case(field=action AND match(action,"success") OR match(action,"failure") OR match(action,"pending") OR match(action,"error"),"Non-prescribed values found", percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
+| search status!="Okay"
+| stats values(status) as status values(percent_coverage) as precent_coverage by field

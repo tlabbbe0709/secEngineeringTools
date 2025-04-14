@@ -1,40 +1,38 @@
-```This one mostly bad```
-index=* tag=authentication
-| fillnull * value="EMPTY"
-| stats 
-count as total
-count(eval(isnull(action))) as action_nullCount 
-count(eval(isnull(app))) as app_nullCount 
-count(eval(isnull(authentication_method))) as authentication_method_nullCount 
-count(eval(isnull(authentication_service))) as authentication_service_nullCount 
-count(eval(isnull(dest))) as dest_nullCount 
-count(eval(isnull(src))) as src_nullCount 
-count(eval(isnull(duration))) as duration_nullCount 
-count(eval(isnull(reason))) as reason_nullCount 
-count(eval(isnull(response_time))) as response_time_nullCount 
-count(eval(isnull(signature))) as signature_nullCount 
-count(eval(isnull(signature_id))) as signature_id_nullCount 
-count(eval(isnull(tag))) as tag_nullCount 
-count(eval(isnull(user))) as user_nullCount 
-count(eval(isnull(user_agent))) as user_agent_nullCount 
-by index sourcetype
-| foreach *_nullCount
-[| eval <<FIELD>>_cimCompliance%=(<<FIELD>>-total)/total]
-| fields index sourcetype *_cimCompliance%
+| datamodel Alerts | spath 
+| spath path=objects{}.fields{} output=v 
+| spath path=objects{}.calculations{}.outputFields{} output=u 
+| eval w=mvappend(v,u) 
+| fields - _raw 
+| fields modelName w
+| mvexpand w 
+| eval field=json_extract(w,"fieldName")
+| table field
+| join field
+[search `cim_Authentication_indexes` tag=authentication
+| head 10000
+```| fields action app authentication_method authentication_service dest duration reason response_time signature_id src src_user user user_agent user_role user_type vendor_account index sourcetype```
+| fieldsummary maxvals=15
+| eventstats max(count) AS total 
+| eval percent_coverage=round(count/total*100, 2) 
+| table field, percent_coverage, distinct_count, total, values
+| eval datamodel="Authentication"
+| spath input=values 
+| rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
+| fillnull value=0 percent_coverage, distinct_value_count, total_events]
 
-| tstats fillnull_value="unknown" summariesonly=true
-    values(Authentication.action) as action
-    values(Authentication.app) as app
-    values(Authentication.authentication_method) as authentication_method
-    values(Authentication.authentication_service) as authentication_service
-    values(Authentication.dest) as dest
-    values(Authentication.src) as src
-    values(Authentication.duration) as duration
-    values(Authentication.reason) as reason
-    values(Authentication.response_time) as response_time
-    values(Authentication.signature) as signature
-    values(Authentication.signature_id) as signature_id
-    values(Authentication.user) as user
-    values(Authentication.user_agent) as user_agent
-    from datamodel=Authentication
-    by index sourcetype
+```
+Alternate search
+
+`cim_Authentication_indexes` tag=authentication
+| head 10000
+| fields action app authentication_method authentication_service dest duration reason response_time signature_id src src_user user user_agent user_role user_type vendor_account index sourcetype
+| fieldsummary maxvals=15
+| eventstats max(count) AS total 
+| eval percent_coverage=round(count/total*100, 2) 
+| table field, percent_coverage, distinct_count, total, values
+| eval datamodel="Authentication"
+| spath input=values 
+| rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
+| fillnull value=0 percent_coverage, distinct_value_count, total_events
+```
+

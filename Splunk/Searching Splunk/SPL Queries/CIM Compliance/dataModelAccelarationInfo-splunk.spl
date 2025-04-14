@@ -1,0 +1,11 @@
+| `datamodel("Splunk_Audit", "Datamodel_Acceleration")` 
+| `drop_dm_object_name("Datamodel_Acceleration")` 
+| join type=outer last_sid 
+    [| rest splunk_server=local count=0 /services/search/jobs reportSearch=summarize* 
+    | rename sid as last_sid 
+    | fields last_sid,runDuration] 
+| eval "size(MB)"=round(size/1048576,1), "retention(days)"=if(retention==0,"unlimited",round(retention/86400,1)), "complete(%)"=round(complete*100,1), "runDuration(s)"=round(runDuration,1) 
+| sort 100 + datamodel 
+| fieldformat earliest=strftime(earliest, "%m/%d/%Y %H:%M:%S") 
+| fieldformat latest=strftime(latest, "%m/%d/%Y %H:%M:%S") 
+| table datamodel,retention(days),earliest,latest,complete(%),size(MB)

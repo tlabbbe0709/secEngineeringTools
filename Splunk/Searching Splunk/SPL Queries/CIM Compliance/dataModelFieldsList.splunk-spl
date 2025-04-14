@@ -1,0 +1,12 @@
+| datamodel <datamodel> | spath 
+| spath path=objects{}.fields{} output=v 
+| spath path=objects{}.calculations{}.outputFields{} output=u 
+| eval w=mvappend(v,u) 
+| fields - _raw 
+| fields modelName w
+| mvexpand w 
+| eval field=json_extract(w,"fieldName")
+| table field
+| stats values(field) as field
+| eval fieldsCommand=mvjoin(field,",")
+| fields fieldsCommand

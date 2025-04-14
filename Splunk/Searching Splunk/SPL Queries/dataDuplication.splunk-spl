@@ -1,3 +1,4 @@
 index=* earliest=-7d latest=now
-| stats count by _raw index sourcetype source host
+| eval md5=md5(_raw)
+| stats count by md5 
 | search count>2 
