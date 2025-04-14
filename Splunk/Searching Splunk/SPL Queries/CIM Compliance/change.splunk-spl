@@ -19,3 +19,4 @@
 | fillnull value=0 percent_coverage, distinct_value_count, total_events]
 | eval status=case(field=action AND NOT match(action,"acl_modified|cleared|created|deleted|modified|stopped|lockout|read|logoff|updated|started|restarted|unlocked"),"Non-prescribed values found", field=status AND NOT match(status,"success|failure"),"Non-prescribed values found",percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
 | search status!="Okay" NOT field IN (dest_bunit, dest_category, dest_priority, src_bunit, src_priority, src_user_bunit, src_user_category, src_user_priority, user_bunit, user_category, user_priority)
+| stats values(status) as status values(percent_coverage) as precent_coverage by field
