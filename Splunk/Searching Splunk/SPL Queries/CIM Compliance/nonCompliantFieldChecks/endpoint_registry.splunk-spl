@@ -1,0 +1,28 @@
+| datamodel Endpoint Registry | spath 
+| spath path=objects{}.fields{} output=v 
+| spath path=objects{}.calculations{}.outputFields{} output=u 
+| eval w=mvappend(v,u) 
+| fields - _raw 
+| fields modelName w
+| mvexpand w 
+| eval field=json_extract(w,"fieldName")
+| table field
+| join field
+    [search `cim_Endpoint_indexes` (tag=endpoint tag=registry)
+| head 10000
+| fieldsummary maxvals=15
+| eventstats max(count) AS total 
+| eval percent_coverage=round(count/total*100, 2) 
+| table field, percent_coverage, distinct_count, total, values
+| spath input=values 
+| rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
+| fillnull value=0 percent_coverage, distinct_value_count, total_events]
+| eval cimStatus=case(
+    field=action AND NOT match(action,"created|deleted|modified|read"),"Non-prescribed values found",
+    field=registry_hive AND NOT match(registry_hive,"HKEY_CURRENT_CONFIG|HKEY_CURRENT_USER|HKEY_LOCAL_MACHINE\\\\SAM|HKEY_LOCAL_MACHINE\\\\Security|HKEY_LOCAL_MACHINE\\\\Software|HKEY_LOCAL_MACHINE\\\\System|HKEY_USERS\\\\\.DEFAULT"),"Non-prescribed values found",
+    field=registry_value_type AND NOT match(registry_value_type,"REG_BINARY|REG_DWORD|REG_DWORD_LITTLE_ENDIAN|REG_DWORD_BIG_ENDIAN|REG_EXPAND_SZ|REG_LINK|REG_MULTI_SZ|REG_NONE|REG_QWORD|REG_QWORD_LITTLE_ENDIAN|REG_SZ"),"Non-prescribed values found",
+    field=status AND NOT match(status,"failure|success"),"Non-prescribed values found",
+    percent_coverage<90,"Less than 90% of events covered",
+    1==1,"Okay")
+| search cimStatus!="Okay" NOT field IN (dest_bunit, dest_category, dest_priority, src_bunit, src_priority, src_user_bunit, src_user_category, src_user_priority, user_bunit, user_category, user_priority)
+| stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage by field

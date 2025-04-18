@@ -1,4 +1,4 @@
-| datamodel Authentication | spath 
+| datamodel Endpoint Ports | spath 
 | spath path=objects{}.fields{} output=v 
 | spath path=objects{}.calculations{}.outputFields{} output=u 
 | eval w=mvappend(v,u) 
@@ -8,7 +8,7 @@
 | eval field=json_extract(w,"fieldName")
 | table field
 | join field
-    [search `cim_Authentication_indexes` tag=authentication
+    [search `cim_Endpoint_indexes` (tag=listening tag=port)
 | head 10000
 | fieldsummary maxvals=15
 | eventstats max(count) AS total 
@@ -17,6 +17,6 @@
 | spath input=values 
 | rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
 | fillnull value=0 percent_coverage, distinct_value_count, total_events]
-| eval status=case(field=action AND NOT match(action,"success|failure|pending|error"),"Non-prescribed values found", percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
-| search status!="Okay" NOT field IN (dest_bunit, dest_category, dest_priority, src_bunit, src_priority, src_user_bunit, src_user_category, src_user_priority, user_bunit, user_category, user_priority)
-| stats values(status) as status values(percent_coverage) as precent_coverage by field
+| eval cimStatus=case(percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
+| search cimStatus!="Okay" NOT field IN (dest_bunit, dest_category, dest_priority, src_bunit, src_priority, src_user_bunit, src_user_category, src_user_priority, user_bunit, user_category, user_priority)
+| stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage by field

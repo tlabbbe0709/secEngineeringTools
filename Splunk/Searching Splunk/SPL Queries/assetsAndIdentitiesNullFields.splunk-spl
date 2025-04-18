@@ -1,0 +1,11 @@
+| `assets`
+| fieldsummary maxvals=15
+| eventstats max(count) AS total 
+| eval percent_coverage=round(count/total*100, 2) 
+| table field, percent_coverage, distinct_count, total, values
+| spath input=values 
+| rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
+| fillnull value=0 percent_coverage, distinct_value_count, total_events
+| where percent_coverage<75
+| stats values(field) as field
+| eval field=mvjoin(field,"|")

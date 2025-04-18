@@ -7,3 +7,16 @@
 | stats first(fs_type) as fs_type first(compare_usage) as compare_usage first(pct_usage) as pct_usage by mount_point, splunk_server 
 | rename mount_point as "Mount Point", fs_type as "File System Type", compare_usage as "Disk Usage (GB)", capacity as "Capacity (GB)", pct_usage as "Disk Usage (%)" splunk_server as "Splunk Server" 
 | sort - "Splunk Server"
+
+```Alternate Search
+| rest splunk_server=* /services/server/status/partitions-space 
+| eval free = if(isnotnull(available), available, free) 
+| eval usage = round((capacity - free) / 1024, 2) 
+| eval capacity = round(capacity / 1024, 2) 
+| eval pct_usage = round(usage / capacity * 100, 2) 
+| eval allocated=mount_point + "" + capacity,
+usage=mount_point + "" + pct_usage
+| stats values(allocated) as "Storage Allocated (GB)" values(usage) as "Storage Usage (%)" by splunk_server
+| rename splunk_server as "Splunk Server" 
+| sort  "Splunk Server"
+```

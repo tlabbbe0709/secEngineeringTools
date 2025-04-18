@@ -4,3 +4,7 @@
 | sort - updateAvailable
 | stats values(splunk_server) as instances by title version update.version
 
+```
+Add after line 4 to filter ES only
+| search title=DA-* OR title=SA-* OR title=SplunkEnterpriseSecuritySuite
+```
