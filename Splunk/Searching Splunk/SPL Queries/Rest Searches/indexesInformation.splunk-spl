@@ -14,4 +14,4 @@ maxTotalDataSizeMB=splunk_server + ": " + maxTotalDataSizeMB,
 maxDataSize=splunk_server + ": " + maxDataSize,
 maxWarmDBCount=splunk_server + ": " + maxWarmDBCount,
 frozenTimePeriodInSecs = splunk_server + ": " + frozenTimePeriodInSecs
-| stats values(totalEventCount) as totalEventCount values(currentDBSizeMB) as currentDBSizeMB values(datatype) as datatype values(datapaths) as datapaths values(frozenTimePeriodInSecs) as frozenTimePeriodInSecs values(maxDataSize) as maxDataSize values(maxTotalDataSizeMB) as maxTotalDataSizeMB values(maxWarmDBCount) as maxWarmDBCount by title
+| stats values(splunk_server) as splunk_server values(totalEventCount) as totalEventCount values(currentDBSizeMB) as currentDBSizeMB values(datatype) as datatype values(datapaths) as datapaths values(frozenTimePeriodInSecs) as frozenTimePeriodInSecs values(maxDataSize) as maxDataSize values(maxTotalDataSizeMB) as maxTotalDataSizeMB values(maxWarmDBCount) as maxWarmDBCount by title
