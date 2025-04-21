@@ -1,0 +1,17 @@
+| rest splunk_server=* /services/data/indexes count=0 datatype=all
+| rename eai:acl.* as *
+| fields title totalEventCount currentDBSizeMB datatype coldPath_expanded homePath_expanded summaryHomePath_expanded thawedPath_expanded coldToFrozenDir coldToFrozenScript frozenTimePeriodInSecs maxDataSize maxTotalDataSizeMB maxWarmDBCount splunk_server
+| eval homePath="homePath" + "=" + homePath_expanded,
+coldPath="coldPath" + "=" + coldPath_expanded,
+thawedPath="thawedPath" + "=" + thawedPath_expanded,
+summaryHomePath="summaryHomePath" + "=" + summaryHomePath_expanded,
+coldToFrozenDir="coldToFrozenDir" + "=" + coldToFrozenDir,
+coldToFrozenScript="coldToFrozenScript" + "=" + coldToFrozenScript
+| eval datapaths=mvappend(homePath,coldPath,thawedPath,summaryHomePath,coldToFrozenDir,coldToFrozenScript)
+| eval totalEventCount=splunk_server + ": " + totalEventCount,
+currentDBSizeMB=splunk_server + ": " + currentDBSizeMB,
+maxTotalDataSizeMB=splunk_server + ": " + maxTotalDataSizeMB,
+maxDataSize=splunk_server + ": " + maxDataSize,
+maxWarmDBCount=splunk_server + ": " + maxWarmDBCount,
+frozenTimePeriodInSecs = splunk_server + ": " + frozenTimePeriodInSecs
+| stats values(totalEventCount) as totalEventCount values(currentDBSizeMB) as currentDBSizeMB values(datatype) as datatype values(datapaths) as datapaths values(frozenTimePeriodInSecs) as frozenTimePeriodInSecs values(maxDataSize) as maxDataSize values(maxTotalDataSizeMB) as maxTotalDataSizeMB values(maxWarmDBCount) as maxWarmDBCount by title
