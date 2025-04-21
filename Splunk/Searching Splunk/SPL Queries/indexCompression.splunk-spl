@@ -1,0 +1,7 @@
+
+​| dbinspect index=_internal
+| fields state,id,rawSize,sizeOnDiskMB 
+| stats sum(rawSize) AS rawTotal, sum(sizeOnDiskMB) AS diskTotalinMB
+| eval rawTotalinMB=(rawTotal / 1024 / 1024) | fields - rawTotal
+| eval compression=tostring(round(diskTotalinMB / rawTotalinMB * 100, 2)) + "%"
+| table rawTotalinMB, diskTotalinMB, compression
