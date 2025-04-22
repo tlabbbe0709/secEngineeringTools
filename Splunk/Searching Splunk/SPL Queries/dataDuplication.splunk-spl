@@ -1,4 +1,6 @@
 index=* earliest=-7d latest=now
-| eval md5=md5(_raw)
-| stats count by md5 
+| eval rawEventmd5Hash=md5(_raw)
+| stats count as total by rawEventmd5Hash index sourcetype
 | search count>2 
+| stats values(sourcetype) as "Sourcetype(s) with Duplicate Logs" by index
+| rename index as "Index with Duplicate Logs"

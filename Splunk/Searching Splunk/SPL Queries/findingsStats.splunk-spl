@@ -1,0 +1,3 @@
+`notable` 
+| timechart count as total span=1h
+| stats min(total) as lowestCount max(total) as highestCount avg(total) as averageCount
