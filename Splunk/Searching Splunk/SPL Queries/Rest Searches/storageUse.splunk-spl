@@ -14,8 +14,8 @@
 | eval usage = round((capacity - free) / 1024, 2) 
 | eval capacity = round(capacity / 1024, 2) 
 | eval pct_usage = round(usage / capacity * 100, 2) 
-| eval allocated=mount_point + "" + capacity,
-usage=mount_point + "" + pct_usage
+| eval allocated=mount_point + ": " + capacity,
+usage=mount_point + ":  " + pct_usage
 | stats values(allocated) as "Storage Allocated (GB)" values(usage) as "Storage Usage (%)" by splunk_server
 | rename splunk_server as "Splunk Server" 
 | sort  "Splunk Server"
