@@ -1,3 +1,4 @@
 index=_internal sourcetype=scheduler status=skipped
 | stats count as totalCount by savedsearch_name reason
 | eval reason=reason + "(" + totalCount + ")"
+| stats values(reason) as "reason(count)" by savedsearch_name

@@ -1,4 +1,4 @@
 | rest  /servicesNS/-/-/admin/macros
-|rename eai:acl.* as * 
+| rename eai:acl.* as * 
 | search app=*CIM* title=*indexes*
-|fields title definition
+| fields title definition

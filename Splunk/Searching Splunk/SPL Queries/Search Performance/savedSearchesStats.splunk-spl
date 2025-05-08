@@ -1,0 +1,20 @@
+(index=_audit savedsearch_name!="" info=completed) OR (index=_internal sourcetype=scheduler)
+| eval 
+    duration=total_run_time 
+| stats 
+    count(eval(status="skipped")) as skippedCount 
+    count(eval(status="success")) as successCount 
+    count(eval(status="deferred")) as deferredCount 
+    count(eval(status="continued")) as continuedCount
+    values(user) as user
+    avg(duration) as avgDuration 
+    max(duration) as maxDuration 
+    min(duration) as minDuration 
+    by  savedsearch_name
+| join type=left savedsearch_name 
+[
+    | rest /servicesNS/-/-/saved/searches
+    | rename eai:acl.* as * 
+    | fields title cron_schedule
+    | rename title as savedsearch_name
+]
