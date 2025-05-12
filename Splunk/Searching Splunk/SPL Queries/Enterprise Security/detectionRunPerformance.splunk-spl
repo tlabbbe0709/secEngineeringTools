@@ -5,5 +5,7 @@ index=_internal sourcetype=scheduler
     [| rest splunk_server=local count=0 /services/saved/searches 
     | search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0 
     | rename eai:acl.app as app, title as detection, eai:acl.owner AS owner 
-    | eval type=case(actions IN ("notable"), "Finding", actions IN ("risk"), "Intermediate Finding",1==1, actions) 
-    | fields detection app owner]
+    | eval detectionType=case(actions IN ("notable"), "Finding", actions IN ("risk"), "Intermediate Finding",1==1, actions) 
+    | eval schedulingType=if(realtime_schedule="1","Real-time", "Continuous")
+    | fields detection detectionType schedulingType app owner]
+    | eventstats avg(*Count) as avg*CountAcrossDetections
