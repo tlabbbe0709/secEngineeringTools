@@ -1,4 +1,4 @@
-|  rest /servicesNS/-/-/admin/macros
+| rest /servicesNS/-/-/admin/macros
 | search title=cim_*_indexes
 | fields title definition
 | eval indexesUsed=split(definition,"OR")

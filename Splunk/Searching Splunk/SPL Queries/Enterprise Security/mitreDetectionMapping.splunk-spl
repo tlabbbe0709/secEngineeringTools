@@ -1,0 +1,18 @@
+| inputlookup mitre_attack_lookup 
+| fields mitre_tactic mitre_sub_techniques mitre_tactic_id mitre_technique mitre_technique_id
+| join type=left mitre_technique_id
+    [
+| rest splunk_server=local count=0 /services/saved/searches 
+| search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0 
+| rename eai:acl.app as app, title as detection_name, action.notable.param.security_domain as security_domain action.correlationsearch.enabled AS is_detection eai:acl.owner AS owner 
+| eval type=case(actions IN ("notable"), "Finding", actions IN ("risk"), "Intermediate Finding",1==1, actions) 
+| rex field=action.correlationsearch.annotations "mitre_attack\"\:\[(?<mitre_annotations>[^+\]]+)" 
+| makemv delim="," mitre_annotations 
+| stats values(detection_name) as detection_name  values(security_domain) as security_domain by mitre_annotations 
+| replace \"*\" with * IN mitre_annotations
+| eval mitre_tactic_id=if(match(mitre_annotations,"TA\d+"),mitre_annotations, null()),
+mitre_technique_id=if(NOT match(mitre_annotations,"(T\d+\.\d+|TA\d+)"),mitre_annotations, null()),
+mitre_sub_techniques=if(match(mitre_annotations,"T\d+\.\d+"),mitre_annotations, null())]
+| eval mitre_tactic=mitre_tactic + " - " + mitre_tactic_id
+| eval mitre_technique=mitre_technique + " - " + mitre_technique_id
+```| stats dc(detection_name) as detectionCount by mitre_tactic```

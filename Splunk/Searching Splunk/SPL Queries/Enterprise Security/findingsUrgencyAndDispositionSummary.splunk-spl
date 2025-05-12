@@ -1,0 +1,16 @@
+`notable` 
+| stats 
+    count by disposition_label search_name urgency status_label 
+| eventstats 
+    sum(count) as urgencyCount by urgency search_name 
+| eventstats 
+    sum(count) as dispositionCount by disposition_label search_name 
+| eventstats 
+    sum(count) as statusCount bystatus_labelsearch_name
+| eval 
+    urgencySummary = urgency + " - " + urgencyCount, 
+    dispositionSummary = disposition_label + " - " + dispositionCount,
+    statusSummary = status_label + " - " + statusCount 
+| stats values(urgencySummary) as "Findings Urgency Summary" values(dispositionSummary) as "Findings Disposition Summary" values(statusSummary) as "Findings Status Summary" sum(count) as "Total Findings" by 
+        search_name 
+| rename search_name as Detection

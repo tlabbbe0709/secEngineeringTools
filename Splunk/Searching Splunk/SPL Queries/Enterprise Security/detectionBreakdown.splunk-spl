@@ -1,0 +1,5 @@
+| rest splunk_server=local count=0 /services/saved/searches 
+| search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0 
+| rex field=search "index(\s+=|=|\s+=\s+|=\s+)(?<indexUsed>\S+)"
+| rex field=search "tstats.+datamodel(\s+=|=|\s+=\s+|=\s+)(?<dataModelUsed>\S+)"
+| fields app detectionName securityDomain owner findingSeverity riskScore indexUsed dataModelUsed type
