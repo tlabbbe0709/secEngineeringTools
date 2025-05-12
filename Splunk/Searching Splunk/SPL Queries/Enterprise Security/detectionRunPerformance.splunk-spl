@@ -1,0 +1,9 @@
+index=_internal sourcetype=scheduler 
+| stats latest(status) as lastRunStatus latest(reason) as lastRunReason latest(run_time) as latestRunTime avg(run_time) as averageRunTime count(eval(status="skipped")) as skippedCount count(eval(status="completed")) as successCount count(eval(status="deferred")) as deferredCount count(eval(status="continued")) as continuedCount count as totalCount by savedsearch_name 
+| rename savedsearch_name as detection 
+| join type=inner 
+    [| rest splunk_server=local count=0 /services/saved/searches 
+    | search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0 
+    | rename eai:acl.app as app, title as detection, eai:acl.owner AS owner 
+    | eval type=case(actions IN ("notable"), "Finding", actions IN ("risk"), "Intermediate Finding",1==1, actions) 
+    | fields detection app owner]
