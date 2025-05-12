@@ -6,7 +6,7 @@
 | eventstats 
     sum(count) as dispositionCount by disposition_label search_name 
 | eventstats 
-    sum(count) as statusCount bystatus_labelsearch_name
+    sum(count) as statusCount by status_label search_name
 | eval 
     urgencySummary = urgency + " - " + urgencyCount, 
     dispositionSummary = disposition_label + " - " + dispositionCount,
