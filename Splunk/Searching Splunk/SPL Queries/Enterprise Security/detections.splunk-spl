@@ -4,3 +4,4 @@
 | eval type=case(actions IN ("notable"), "Finding", actions IN ("risk"), "Intermediate Finding",1==1, actions)
 | rex field=action.correlationsearch.annotations "mitre_attack\"\:\[(?<mitre_annotations>[^+\]]+)"
 | makemv delim="," mitre_annotations
+| eval schedulingType=if(realtime_schedule="1","Real-time", "Continuous")

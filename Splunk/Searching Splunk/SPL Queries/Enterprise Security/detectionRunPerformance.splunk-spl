@@ -1,5 +1,6 @@
 index=_internal sourcetype=scheduler 
-| stats latest(status) as lastRunStatus latest(reason) as lastRunReason latest(run_time) as latestRunTime avg(run_time) as averageRunTime count(eval(status="skipped")) as skippedCount count(eval(status="completed")) as successCount count(eval(status="deferred")) as deferredCount count(eval(status="continued")) as continuedCount count as totalCount by savedsearch_name 
+| stats latest(_time) as lastTimeRun latest(status) as lastRunStatus latest(reason) as lastRunReason latest(run_time) as lastDuration avg(run_time) as averageDuration count(eval(status="skipped")) as skippedCount count(eval(status="completed")) as successCount count(eval(status="deferred")) as deferredCount count(eval(status="continued")) as continuedCount count as totalCount by savedsearch_name 
+| convert ctime(lastTimeRun)
 | rename savedsearch_name as detection 
 | join type=inner 
     [| rest splunk_server=local count=0 /services/saved/searches 
