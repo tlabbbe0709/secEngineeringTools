@@ -1,0 +1,38 @@
+index=_internal source=*license_usage.log* (host=*.splunk*.* NOT (host=sh-* host=*.splunk*.*)) TERM("type=RolloverSummary") 
+| rex field=_raw "^(?<timestring>\d\d-\d\d-\d{4}\s\d\d:\d\d:\d\d.\d{3}\s\+\d{4})" 
+| eval event_time=strptime(timestring,"%m-%d-%Y %H:%M:%S.%N%z") 
+| eval rel_src_time=relative_time(event_time, tostring(-1440)."m") 
+| eval zone=strftime($rel_src_time$,"%z") 
+| eval minutes=substr(zone,-2) 
+| eval hours=substr(zone,2,2) 
+| eval mzone=if(zone!=0, ((hours*60)+minutes)*(zone/abs(zone)), 0) 
+| eval rel_time_in_mins=-1440-mzone 
+| eval rel_time=if(rel_time_in_mins >= 0 , "+".tostring(rel_time_in_mins)."m", tostring(rel_time_in_mins)."m") 
+| eval _time=relative_time(event_time, rel_time) + 1 
+| eval peer=coalesce(slave,peer) 
+| bin _time span=1d 
+| stats latest(b) AS b by peer, pool, _time 
+| timechart span=1d sum(b) AS "volume" fixedrange=false 
+| eval GB=round(volume/pow(2,30),3) 
+| append 
+    [| search (index=_cmc_summary OR index=summary) source="splunk-entitlements" 
+    | rex field=host "^[^.]+[.](?<stack>[^.]+)" 
+    | search 
+        [| rest /services/server/info splunk_server=local 
+        | fields splunk_server 
+        | rex field=splunk_server "^[^.]+[.](?<stack>[^.]+)" 
+        | fields stack] 
+    | rex field=_raw "^(?<timestring>\d\d/\d\d/\d{4}\s\d\d:\d\d:\d\d\s\+\d{4})" 
+    | eval event_time=strptime(timestring,"%m/%d/%Y %H:%M:%S %z") 
+    | eval rel_src_time=relative_time(event_time, tostring(-1440)."m") 
+    | eval zone=strftime($rel_src_time$,"%z") 
+    | eval minutes=substr(zone,-2) 
+    | eval hours=substr(zone,2,2) 
+    | eval mzone=if(zone!=0, ((hours*60)+minutes)*(zone/abs(zone)), 0) 
+    | eval rel_time_in_mins=-1440-mzone 
+    | eval rel_time=if(rel_time_in_mins >= 0 , "+".tostring(rel_time_in_mins)."m", tostring(rel_time_in_mins)."m") 
+    | eval _time=relative_time(event_time, rel_time) 
+    | bin _time span=1d 
+    | stats max(ingest_license) as "license limit" by _time] 
+| stats values(*) as * by _time 
+| fields - volume
