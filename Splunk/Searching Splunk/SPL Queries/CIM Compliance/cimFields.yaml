@@ -1,0 +1,19 @@
+Authentication:
+  Fields: "action, app, authentication_method, authentication_method, authentication_service, dest, dest_nt_domain, duration, reason, response_time, signature, signature_id, src, src_user, src_user_role, src_user_type, tag, user, user_agent, user_id, user_role, user_type, vendor_account"
+  
+Change:
+  All_Changes:
+    Fields: "action, change_type, command, dest, dvc, image_id, object, object_attrs, object_category, object_id, object_path, result, result_id, src, status, tag, user, user_agent, user_name, user_type, vendor_account, vendor_product, vendor_region"
+  Account_Management: 
+    Fields: "dest_nt_domain, src_nt_domain, src_user, src_user_name, src_user_type"
+  Network_Changes: "dest_ip_range, dest_port_range, direction, rule_action, src_ip_range, src_port_range, device_restarts"
+
+Endpoint:
+  Filesystem:
+    Fields:
+
+Email:
+  All_Email:
+    Fields: "action, delay, dest, duration, file_hash, file_name, file_size, internal_message_id, message_id, message_info, orig_dest, orig_recipient, orig_src, process, process_id, protocol, recipient, recipient_count, recipient_domain, recipient_status, response_time, retires, return_addr, size, src, src_user, src_user_domain, status_code, subject, tag, url, user, vendor_product, xdelay, xref"
+  Filtering:
+    Fields: "filter_action, filter_score, signature, signature_extra, signature_id"

@@ -1,2 +1,2 @@
-(index=_audit info=completed action=search user!="splunk-system-user") 
+(index=_audit info=completed action=search user!="splunk-system-user") earliest=-30d@d latest=now
 | timechart dc(user) as "Distinct Users"
