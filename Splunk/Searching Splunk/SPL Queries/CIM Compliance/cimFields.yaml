@@ -8,6 +8,12 @@ Change:
     Fields: "dest_nt_domain, src_nt_domain, src_user, src_user_name, src_user_type"
   Network_Changes: "dest_ip_range, dest_port_range, direction, rule_action, src_ip_range, src_port_range, device_restarts"
 
+Network Sessions:
+  All_Sessions:
+    Fields: "action,dest_dns,dest_ip,dest_mac,dest_nt_host,duration,response_time,signature,signature_id,src_dns,src_ip,src_mac,src_nt_host,user,vendor_product"
+  DHCP:
+    Fields: "lease_duration,lease_scope"
+
 Endpoint:
   Filesystem:
     Fields:
