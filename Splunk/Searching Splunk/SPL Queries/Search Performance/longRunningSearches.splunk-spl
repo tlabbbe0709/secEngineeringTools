@@ -1,0 +1,15 @@
+index=_audit action=search sourcetype=audittrail search_id!="rsa_*" 
+| eval user = if(user="n/a", null(), user) 
+| eval search_type = case( match(search_id, "^SummaryDirector_"), "summarization", match(search_id, "^((rt_)?scheduler__|alertsmanager_)"), "scheduled", match(search_id, "\d{10}\.\d+(_[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})?$"), "ad hoc", true(), "other") 
+| eval search=if(isnull(savedsearch_name) OR savedsearch_name=="", search, savedsearch_name) 
+| stats min(_time) as _time, values(user) as user, max(total_run_time) as total_run_time, first(search) as search, first(search_type) as search_type, first(apiStartTime) as apiStartTime, first(apiEndTime) as apiEndTime by search_id 
+| where isnotnull(search) AND search_type="ad hoc" 
+| search user="*" 
+| fields search, total_run_time, _time, apiStartTime, apiEndTime, search_type, user 
+| eval earliest = case( like(apiStartTime, "%ZERO_TIME%") AND like(apiEndTime, "%ZERO_TIME%"), "all time", like(apiStartTime, "%ZERO_TIME%"), "-", 1 == 1, apiStartTime ) 
+| eval latest = case( like(apiStartTime, "%ZERO_TIME%") AND like(apiEndTime, "%ZERO_TIME%"), "all time", like(apiEndTime, "%ZERO_TIME%"), "-", 1 == 1, apiEndTime ) 
+| eval search = if(isnotnull(search), search, "N/A") 
+| eval _time = strftime(_time, "%m/%d/%Y %H:%M:%S %z") 
+| sort - total_run_time 
+| fields search, total_run_time, _time, earliest, latest, search_type, user 
+| rename search as Search, total_run_time as "Search Runtime", _time as "Search Start", earliest as "Earliest Time", latest as "Latest Time", search_type as Type, user as "User"
