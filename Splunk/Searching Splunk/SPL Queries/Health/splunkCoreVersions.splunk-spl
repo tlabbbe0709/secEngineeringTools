@@ -1,0 +1,2 @@
+| rest /services/server/info splunk_server=*
+| fields host  version
