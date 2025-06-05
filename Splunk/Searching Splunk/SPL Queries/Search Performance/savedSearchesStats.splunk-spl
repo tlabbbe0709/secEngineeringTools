@@ -1,6 +1,4 @@
 (index=_audit savedsearch_name!="" info=completed) OR (index=_internal sourcetype=scheduler) 
-| eval 
-    duration=total_run_time 
 | stats  
     count as totalCount
     count(eval(status="skipped")) as skippedCount 
@@ -10,15 +8,16 @@
     values(user) as user
     values(host) as searchHead
     values(reason) as skippedReason
-    avg(duration) as avgDuration 
-    max(duration) as maxDuration 
-    min(duration) as minDuration 
+    avg(total_run_time) as avgDuration 
+    max(total_run_time) as maxDuration 
+    min(total_run_time) as minDuration 
     by  savedsearch_name
     |where skippedCount>0
 | join type=left savedsearch_name 
 [
     | rest /servicesNS/-/-/saved/searches splunk_server=*
     | rename eai:acl.* as * 
-    | fields title cron_schedule search
+    | fields title cron_schedule search owner app
     | rename title as savedsearch_name
 ]
+| sort - avgDuration
