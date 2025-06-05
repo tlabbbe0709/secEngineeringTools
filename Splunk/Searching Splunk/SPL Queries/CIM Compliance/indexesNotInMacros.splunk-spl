@@ -1,0 +1,10 @@
+| tstats values(sourcetype) as sts where index=* by index
+| join index type=left
+    [| rest /servicesNS/-/-/admin/macros 
+| rename eai:acl.* as * 
+| search app=*CIM* title=*indexes* 
+| fields title definition 
+| makemv definition delim="OR" 
+| rex field=definition "index(=|\s+=|\s+=\s+|=\s+)(?<index>\w+)" 
+| stats values(title) as macroUsed by index]
+| where isnull(macroUsed)
