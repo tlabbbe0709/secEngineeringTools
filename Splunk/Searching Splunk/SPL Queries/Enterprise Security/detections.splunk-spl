@@ -1,8 +1,8 @@
 | rest splunk_server=local count=0 /services/saved/searches 
 | search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0
 | rename eai:acl.app as app, title as detection_name, action.correlationsearch.label as detection_label, action.notable.param.security_domain as security_domain action.correlationsearch.enabled AS is_detection eai:acl.owner AS owner
-| eval detectionType=case(match(actions,"notable"), "Finding", match(actions,"risk"), "Intermediate Finding")
+| eval detectionType=case(match(actions,"notable"), "Finding (Notable)", match(actions,"risk"), "Intermediate Finding (Risk Event)",1==1,actions)
 | rex field=action.correlationsearch.annotations "mitre_attack\"\:\[(?<mitre_annotations>[^+\]]+)"
 | makemv delim="," mitre_annotations
 | eval schedulingType=if(realtime_schedule="1","Real-time", "Continuous")
-|fields detection_name detection_label app security_domain schedulingType detectionType  actions owner
+|fields detection_name  app security_domain schedulingType detectionType  actions owner
