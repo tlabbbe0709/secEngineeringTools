@@ -5,3 +5,4 @@
 | where isnotnull(status)
 | stats dc(index) as indexesCount dc(sourcetype) as sourcetypeCount sum(count) as totalEvents  by status
 | fieldformat averageTimeDifference=tostring(averageTimeDifference,"duration")
+| addcoltotals indexesCount sourcetypeCount totalEvents label="Total Counts" labelfield=status
