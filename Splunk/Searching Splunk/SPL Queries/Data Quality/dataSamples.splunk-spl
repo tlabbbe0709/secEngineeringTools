@@ -1,0 +1,4 @@
+| tstats count where index=* by index sourcetype 
+| stats values(index) as index by sourcetype 
+| eval indexes=mvjoin(index,",") 
+| map maxsearches=72 search="|search index IN ($indexes$) sourcetype=$sourcetype$ | head 10 | stats values(_raw) as rawSample by sourcetype"
