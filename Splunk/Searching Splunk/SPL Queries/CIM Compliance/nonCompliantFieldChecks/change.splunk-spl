@@ -10,13 +10,14 @@
 | join field
     [search `cim_Change_indexes` tag=change
 | head 10000
-| fieldsummary maxvals=15
+| fieldsummary maxvals=50
 | eventstats max(count) AS total 
 | eval percent_coverage=round(count/total*100, 2) 
 | table field, percent_coverage, distinct_count, total, values
 | spath input=values 
 | rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
 | fillnull value=0 percent_coverage, distinct_value_count, total_events]
-| eval cimStatus=case(field=action AND NOT match(action,"acl_modified|cleared|created|deleted|modified|stopped|lockout|read|logoff|updated|started|restarted|unlocked"),"Non-prescribed values found", field=status AND NOT match(status,"success|failure"),"Non-prescribed values found",percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
-| search cimStatus!="Okay" NOT field IN (dest_bunit, dest_category, dest_priority, src_bunit, src_priority, src_user_bunit, src_user_category, src_user_priority, user_bunit, user_category, user_priority)
-| stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage by field
+| mvexpand sample_values
+| eval cimStatus=case(field=action AND NOT match(sample_values,"acl_modified|cleared|created|deleted|modified|stopped|lockout|read|logoff|updated|started|restarted|unlocked"),"Non-prescribed values found", field=status AND NOT match(sample_values,"success|failure"),"Non-prescribed values found",percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
+| eval nonPrescribedValues=if(cimStatus="Non-prescribed values found",sample_values,null())
+| stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage values(nonPrescribedValues) as nonPrescribedValues by field
