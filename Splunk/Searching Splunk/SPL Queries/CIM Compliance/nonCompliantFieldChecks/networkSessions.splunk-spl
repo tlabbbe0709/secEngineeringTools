@@ -18,8 +18,8 @@
 | rename {}.value AS sample_values {}.count AS sample_count distinct_count AS distinct_value_count total AS total_events 
 | fillnull value=0 percent_coverage, distinct_value_count, total_events]
 | eval cimStatus=case(
-    field=action AND NOT match(action,"started|ended|blocked"),"Non-prescribed values found", 
+    field=action AND NOT match(sample_values,"started|ended|blocked"),"Non-prescribed values found", 
     percent_coverage<90,"Less than 90% of events covered",
     1==1,"Okay")
 | search cimStatus!="Okay" NOT field IN (dest_bunit, dest_category, dest_priority, src_bunit, src_priority, src_user_bunit, src_user_category, src_user_priority, user_bunit, user_category, user_priority)
-| stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage by field 
+| stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage by field

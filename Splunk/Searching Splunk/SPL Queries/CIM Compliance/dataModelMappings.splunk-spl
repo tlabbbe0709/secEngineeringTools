@@ -1,0 +1,23 @@
+|tstats values(sourcetype) as sourcetypes where index=* by index
+| join index type=left 
+[| rest /servicesNS/-/-/admin/macros 
+| rename eai:acl.* as * 
+| search app=*CIM* title=*indexes* NOT title=uba_cim_* NOT definition="()"
+|fields title definition
+| makemv definition delim="OR" 
+| mvexpand definition
+| rex field=definition "index\sIN\s\((?<index>[^\)]+)\).+sourcetype\sIN\s\((?<sourcetype>[^\)]+)"
+| makemv sourcetype delim=","
+| makemv index delim=","
+| stats values(definition) as macroDefinition values(title) as macroUsed values(sourcetype) as sourcetypeUsedInMacro by index
+| eval macroDefinition=mvjoin(macroDefinition,":::$$$:::")]
+| makemv macroDefinition delim=":::$$$:::"
+| makemv macroUsed delim=" "
+| makemv sourcetypeUsedInMacro delim=" "
+| mvexpand sourcetypes
+| mvexpand sourcetypeUsedInMacro
+| stats values(macroUsed) as macrosUsed by index sourcetypes sourcetypeUsedInMacro
+| eval unused=if(isnull(sourcetypeUsedInMacro) OR sourcetypeUsedInMacro="" OR sourcetypeUsedInMacro!=sourcetypes,"1","0")
+| search unused="0"
+|rex field=macrosUsed "cim_(?<datamodel>[^_]+)"
+| stats values(datamodel) as datamodel values(sourcetypes) as sourcetypes by index

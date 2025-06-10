@@ -1,6 +1,8 @@
 Authentication:
   Fields: "action, app, authentication_method, authentication_method, authentication_service, dest, dest_nt_domain, duration, reason, response_time, signature, signature_id, src, src_user, src_user_role, src_user_type, tag, user, user_agent, user_id, user_role, user_type, vendor_account"
-  
+Alerts:
+  Fields: "app, body, description, dest, dest_type,id,mitre_technique_id,severity,severity_id,signature,signature_id,src,src_type,subject,type,user,user_name,vendor_account,vendor_region"
+
 Change:
   All_Changes:
     Fields: "action, change_type, command, dest, dvc, image_id, object, object_attrs, object_category, object_id, object_path, result, result_id, src, status, tag, user, user_agent, user_name, user_type, vendor_account, vendor_product, vendor_region"

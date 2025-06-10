@@ -1,18 +1,6 @@
 (index=_audit savedsearch_name!="" info=completed) OR (index=_internal sourcetype=scheduler) 
-| stats  
-    count as totalCount
-    count(eval(status="skipped")) as skippedCount 
-    count(eval(status="success")) as successCount 
-    count(eval(status="deferred")) as deferredCount 
-    count(eval(status="completed")) as completedCount
-    values(user) as user
-    values(host) as searchHead
-    values(reason) as skippedReason
-    avg(total_run_time) as avgDuration 
-    max(total_run_time) as maxDuration 
-    min(total_run_time) as minDuration 
-    by  savedsearch_name
-    |where skippedCount>0
+| stats  count as totalCountcount(eval(status="skipped")) as skippedCount count(eval(status="success")) as successCount count(eval(status="deferred")) as deferredCount count(eval(status="completed")) as completedCountvalues(user) as uservalues(host) as searchHeadvalues(reason) as skippedReasonavg(total_run_time) as avgDuration max(total_run_time) as maxDuration min(total_run_time) as minDuration by  savedsearch_name
+|where skippedCount>0
 | join type=left savedsearch_name 
 [
     | rest /servicesNS/-/-/saved/searches splunk_server=*
@@ -21,3 +9,4 @@
     | rename title as savedsearch_name
 ]
 | sort - avgDuration
+
