@@ -19,5 +19,5 @@
 | fillnull value=0 percent_coverage, distinct_value_count, total_events]
 | eval cimStatus=case(field="action" AND NOT match(sample_values,"success|failure|pending|error"),"Non-prescribed values found", percent_coverage<90,"Less than 90% of events covered",1==1,"Okay")
 | mvexpand sample_values
-| eval nonPrescribedValues=if(cimStatus!="Non-prescribed values found",sample_values,null())
+| eval nonPrescribedValues=if(cimStatus="Non-prescribed values found",sample_values,null())
 | stats values(cimStatus) as cimStatus values(percent_coverage) as precent_coverage values(nonPrescribedValues) as nonPrescribedValues by field
