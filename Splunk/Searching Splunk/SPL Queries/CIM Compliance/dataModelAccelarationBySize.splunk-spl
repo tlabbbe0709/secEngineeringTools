@@ -1,0 +1,21 @@
+| rest /services/admin/summarization by_tstats=t splunk_server=local count=0 
+| eval key=replace('title',"tstats:DM_".'eai:acl.app'."_",""),datamodel=replace('summary.id',"DM_".'eai:acl.app'."_","") 
+| join type=left key 
+    [| rest /services/data/models splunk_server=local count=0 
+    | table title acceleration.cron_schedule eai:digest 
+    | rename title as key 
+    | rename acceleration.cron_schedule AS cron] 
+| table datamodel eai:acl.app summary.access_time summary.is_inprogress summary.size summary.latest_time summary.complete summary.buckets_size summary.buckets cron summary.last_error summary.time_range summary.id summary.mod_time eai:digest summary.earliest_time summary.last_sid summary.access_count 
+| rename summary.id AS summary_id, summary.time_range AS retention, summary.earliest_time as earliest, summary.latest_time as latest, eai:digest as digest 
+| rename summary.* AS *, eai:acl.* AS * 
+| sort datamodel 
+| rename access_count AS Datamodel_Acceleration.access_count access_time AS Datamodel_Acceleration.access_time app AS Datamodel_Acceleration.app buckets AS Datamodel_Acceleration.buckets buckets_size AS Datamodel_Acceleration.buckets_size cron AS Datamodel_Acceleration.cron complete AS Datamodel_Acceleration.complete datamodel AS Datamodel_Acceleration.datamodel digest AS Datamodel_Acceleration.digest earliest AS Datamodel_Acceleration.earliest is_inprogress AS Datamodel_Acceleration.is_inprogress last_error AS Datamodel_Acceleration.last_error last_sid AS Datamodel_Acceleration.last_sid latest AS Datamodel_Acceleration.latest mod_time AS Datamodel_Acceleration.mod_time retention AS Datamodel_Acceleration.retention size AS Datamodel_Acceleration.size summary_id AS Datamodel_Acceleration.summary_id 
+| fields "Datamodel_Acceleration.access_count" "Datamodel_Acceleration.access_time" "Datamodel_Acceleration.app" "Datamodel_Acceleration.buckets" "Datamodel_Acceleration.buckets_size" "Datamodel_Acceleration.cron" "Datamodel_Acceleration.complete" "Datamodel_Acceleration.datamodel" "Datamodel_Acceleration.digest" "Datamodel_Acceleration.earliest" "Datamodel_Acceleration.is_inprogress" "Datamodel_Acceleration.last_error" "Datamodel_Acceleration.last_sid" "Datamodel_Acceleration.latest" "Datamodel_Acceleration.mod_time" "Datamodel_Acceleration.retention" "Datamodel_Acceleration.size" "Datamodel_Acceleration.summary_id" 
+| rename "Datamodel_Acceleration.*" as * 
+| join type=outer last_sid 
+    [| rest splunk_server=local count=0 /services/search/jobs reportSearch=summarize* 
+    | rename sid as last_sid 
+    | fields last_sid,runDuration] 
+| eval "size(MB)"=round(size/1048576,1), "retention(days)"=if(retention==0,"unlimited",round(retention/86400,1)), "complete(%)"=round(complete*100,1), "runDuration(s)"=round(runDuration,1) 
+| sort 18 - size 
+| table datamodel,size(MB)
