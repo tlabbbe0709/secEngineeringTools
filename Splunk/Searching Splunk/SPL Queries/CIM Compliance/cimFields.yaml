@@ -12,9 +12,16 @@ Change:
 
 Network Sessions:
   All_Sessions:
-    Fields: "action,dest_dns,dest_ip,dest_mac,dest_nt_host,duration,response_time,signature,signature_id,src_dns,src_ip,src_mac,src_nt_host,user,vendor_product"
+    All Fields: "action,dest_dns,dest_ip,dest_mac,dest_nt_host,duration,response_time,signature,signature_id,src_dns,src_ip,src_mac,src_nt_host,user,vendor_product"
   DHCP:
-    Fields: "lease_duration,lease_scope"
+    All Fields: "lease_duration,lease_scope"
+
+Network Traffic:
+  All_Traffic: 
+    All Fields: "action,app,bytes,bytes_in,bytes_out,channel,dest,dest_interface,dest_ip,dest_mac,dest_port,dest_translated_ip,dest_translate_port,dest_zone,direction,duration,dvc,dvc_ip,dvc_mac,dvc_priority,dvc_zone,flow_id,icmp_code,icmp_type,packets,packets_in,packets_out,process_id,protocol,protocol_version,response_time,rule,session_id,src,src_interface"
+    Recommended Fields: "action,bytes,bytes_in,bytes_out,dest,dest_port,dvc,rule,src,src_port,transport,user,vendor_product"
+
+
 
 Endpoint:
   Filesystem:
