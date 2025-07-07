@@ -3,3 +3,4 @@
 | stats dc(bucketId) as totalBuckets dc(index) as indexCount sum(rawSize) as totalRawSizeBytes sum(sizeOnDiskMB) as totalSizeOnDiskMB by location
 | eval totalRawSizeGB=round(totalRawSizeBytes/1024/1024/1024,3),
 totalSizeOnDiskGB=round(totalSizeOnDiskMB/1024,3)
+

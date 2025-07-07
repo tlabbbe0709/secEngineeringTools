@@ -6,3 +6,6 @@
 | makemv delim="," mitre_annotations
 | eval schedulingType=if(realtime_schedule="1","Real-time", "Continuous")
 |fields detection_name  app security_domain schedulingType detectionType  actions owner
+
+
+| tstats summariesonly=t allow_old_summaries=t count values(Web.bytes) values(Web.bytes_in) values(Web.bytes_out) values(Web.user) values(Web.app) values(Web.src) values(Web.dest) from datamodel=Web where nodename=Web.proxy Web.bytes_out>35000000 by Web.url _time span=1s

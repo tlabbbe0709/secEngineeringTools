@@ -1,3 +1,267 @@
 acl_modified|created|deleted|modified|read
 
 
+appLogo.png:1 
+
+           GET https://10.203.6.254:8000/en-US/splunkd/__raw/servicesNS/dlee_admin/Splunk_Security_Essentials/static/appLogo.png 404 (Not Found)
+Image
+setAppLabelDisplay @ common.js:2080
+render @ common.js:2080
+(anonymous) @ common.js:2035
+render @ common.js:2080
+(anonymous) @ common.js:2035
+renderAppBar @ dashboard_1.1.js:213
+(anonymous) @ dashboard_1.1.js:213
+Promise.then
+render @ dashboard_1.1.js:213
+(anonymous) @ dashboard_1.1.js:213
+l @ common.js:1588
+fireWith @ common.js:1588
+Deferred.O.each.o.<computed> @ common.js:1588
+parseDashboardXML @ dashboard_1.1.js:207
+enter @ dashboard_1.1.js:207
+_handleModeChange @ dashboard_1.1.js:207
+c @ common.js:1588
+u @ common.js:1588
+setTimeout
+(anonymous) @ common.js:1588
+l @ common.js:1588
+add @ common.js:1588
+(anonymous) @ common.js:1588
+Deferred @ common.js:1588
+then @ common.js:1588
+handleModeChange @ dashboard_1.1.js:207
+u @ common.js:1599
+trigger @ common.js:1599
+set @ common.js:1599
+(anonymous) @ dashboard_1.1.js:207
+c @ common.js:1588
+u @ common.js:1588
+setTimeout
+(anonymous) @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+fire @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+(anonymous) @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+(anonymous) @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+Deferred.O.each.o.<computed> @ common.js:1588
+success @ common.js:1944
+(anonymous) @ common.js:1599
+c @ common.js:1588
+u @ common.js:1588
+setTimeout
+(anonymous) @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+fire @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+Deferred.O.each.o.<computed> @ common.js:1588
+(anonymous) @ common.js:1599
+c @ common.js:1588
+u @ common.js:1588
+setTimeout
+(anonymous) @ common.js:1588
+l @ common.js:1588
+add @ common.js:1588
+(anonymous) @ common.js:1588
+Deferred @ common.js:1588
+then @ common.js:1588
+(anonymous) @ common.js:1599
+l @ common.js:1588
+fireWith @ common.js:1588
+A @ common.js:1588
+(anonymous) @ common.js:1588
+XMLHttpRequest.send
+send @ common.js:1588
+ajax @ common.js:1588
+t.ajax @ common.js:1599
+t.sync @ common.js:1599
+sync @ common.js:1599
+fetch @ common.js:1599
+fetch @ common.js:1599
+fetch @ common.js:1599
+fetch @ common.js:1599
+(anonymous) @ common.js:1944
+l @ common.js:1588
+fireWith @ common.js:1588
+c @ common.js:1588
+u @ common.js:1588
+setTimeout
+(anonymous) @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+fire @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+Deferred.O.each.o.<computed> @ common.js:1588
+l @ common.js:1588
+fireWith @ common.js:1588
+Deferred.O.each.o.<computed> @ common.js:1588
+(anonymous) @ common.js:1944
+e.success @ common.js:1599
+l @ common.js:1588
+fireWith @ common.js:1588
+A @ common.js:1588
+(anonymous) @ common.js:1588
+XMLHttpRequest.send
+send @ common.js:1588
+ajax @ common.js:1588
+t.ajax @ common.js:1599
+t.sync @ common.js:1599
+sync @ common.js:1599
+fetch @ common.js:1599
+fetch @ common.js:1599
+fetch @ common.js:1599
+bootstrapAppLocals @ common.js:1944
+$whenPageViewDependencies @ common.js:1944
+$whenPageViewDependencies @ dashboard_1.1.js:207
+(anonymous) @ dashboard_1.1.js:207
+c @ common.js:1588
+u @ common.js:1588
+setTimeout
+(anonymous) @ common.js:1588
+l @ common.js:1588
+add @ common.js:1588
+(anonymous) @ common.js:1588
+Deferred @ common.js:1588
+then @ common.js:1588
+page @ dashboard_1.1.js:207
+view @ dashboard_1.1.js:207
+execute @ common.js:1599
+(anonymous) @ common.js:1599
+(anonymous) @ common.js:1599
+z.some.z.any @ common.js:1944
+loadUrl @ common.js:1599
+start @ common.js:1599
+o.start_backbone_history @ common.js:2035
+(anonymous) @ dashboard_1.1.js:1
+2068 @ dashboard_1.1.js:1
+a @ dashboard_1.1.js:1
+i @ dashboard_1.1.js:1
+(anonymous) @ dashboard_1.1.js:1
+(anonymous) @ dashboard_1.1.js:1Understand this error
+swa.js:2139 Pushing Data To Queue: Event {_type: 'ManageBookmarks', data: {…}, experienceID: 'dd1ccf8c-0276-86dd-bf4e-7ad693b25f81', userID: '457dee5fdce8ce35d5ed9a7663faef904c4d5e86962af59bde68b22381953699', _timestamp: 1750955141356, …}
+swa.js:2139 Current Queue: (8) [Event, Event, Event, Event, Event, Event, Event, Event]
+bookmarked_content.js:671 Uncaught (in promise) TypeError: Cannot convert undefined or null to object
+    at Object.keys (<anonymous>)
+    at Object.success (bookmarked_content.js:671:39)
+    at l (common.js:1588:24444)
+    at Object.fireWith [as resolveWith] (common.js:1588:25192)
+    at A (common.js:1588:76094)
+    at XMLHttpRequest.<anonymous> (common.js:1588:78562)
+(anonymous) @ bookmarked_content.js:671
+l @ common.js:1588
+fireWith @ common.js:1588
+A @ common.js:1588
+(anonymous) @ common.js:1588
+XMLHttpRequest.send
+send @ common.js:1588
+ajax @ common.js:1588
+O.each.O.<computed> @ common.js:1588
+getJSON @ common.js:1588
+(anonymous) @ bookmarked_content.js:660
+execCb @ VM1166:1697
+check @ VM1166:879
+eval @ VM1166:1140
+eval @ VM1166:135
+eval @ VM1166:1190
+each @ VM1166:60
+emit @ VM1166:1189
+check @ VM1166:939
+eval @ VM1166:1140
+eval @ VM1166:135
+eval @ VM1166:1190
+each @ VM1166:60
+emit @ VM1166:1189
+check @ VM1166:939
+eval @ VM1166:1140
+eval @ VM1166:135
+eval @ VM1166:1190
+each @ VM1166:60
+emit @ VM1166:1189
+check @ VM1166:939
+enable @ VM1166:1177
+init @ VM1166:789
+eval @ VM1166:1015
+eval @ VM1166:135
+text.get.accept @ json.js:48
+xhr.onreadystatechange @ text.js:289
+XMLHttpRequest.send
+text.get @ text.js:293
+load @ json.js:37
+eval @ VM1166:1096
+eval @ VM1166:135
+on @ VM1166:518
+callPlugin @ VM1166:956
+fetch @ VM1166:825
+check @ VM1166:857
+enable @ VM1166:1177
+enable @ VM1166:1558
+eval @ VM1166:1162
+eval @ VM1166:135
+each @ VM1166:60
+enable @ VM1166:1114
+init @ VM1166:789
+callGetModule @ VM1166:1204
+completeLoad @ VM1166:1591
+onScriptLoad @ VM1166:1718
+script
+document.createElement @ common.js:1943
+req.createNode @ VM1166:1879
+req.load @ VM1166:1900
+load @ VM1166:1686
+load @ VM1166:835
+fetch @ VM1166:825
+check @ VM1166:857
+enable @ VM1166:1177
+enable @ VM1166:1558
+eval @ VM1166:1162
+eval @ VM1166:135
+each @ VM1166:60
+enable @ VM1166:1114
+init @ VM1166:789
+callGetModule @ VM1166:1204
+completeLoad @ VM1166:1591
+onScriptLoad @ VM1166:1718
+script
+document.createElement @ common.js:1943
+req.createNode @ VM1166:1879
+req.load @ VM1166:1900
+load @ VM1166:1686
+load @ VM1166:835
+fetch @ VM1166:825
+check @ VM1166:857
+enable @ VM1166:1177
+enable @ VM1166:1558
+eval @ VM1166:1162
+eval @ VM1166:135
+each @ VM1166:60
+enable @ VM1166:1114
+init @ VM1166:789
+eval @ VM1166:1461
+setTimeout
+req.nextTick @ VM1166:1816
+localRequire @ VM1166:1450
+requirejs @ VM1166:1798
+y @ common.js:1944
+(anonymous) @ bookmarked_content.js:203Understand this error
+swa.js:2139 Pushing Data To Queue: Event {_type: 'dashboard.error', data: {…}, experienceID: 'dd1ccf8c-0276-86dd-bf4e-7ad693b25f81', userID: '457dee5fdce8ce35d5ed9a7663faef904c4d5e86962af59bde68b22381953699', _timestamp: 1750955141, …}
+swa.js:2139 Current Queue: (9) [Event, Event, Event, Event, Event, Event, Event, Event, Event]
+common.js:1944 TypeError: Cannot read properties of undefined (reading 'default')
+    at bookmarked_content.js:1776:46
+    at Object.execCb (eval at e.exports (common.js:538:116708), <anonymous>:1697:33)
+    at Module.check (eval at e.exports (common.js:538:116708), <anonymous>:879:55)
+    at Module.enable (eval at e.exports (common.js:538:116708), <anonymous>:1177:22)
+    at Module.init (eval at e.exports (common.js:538:116708), <anonymous>:789:26)
+    at eval (eval at e.exports (common.js:538:116708), <anonymous>:1461:36)
+has context menu
+
+
+has context menu
