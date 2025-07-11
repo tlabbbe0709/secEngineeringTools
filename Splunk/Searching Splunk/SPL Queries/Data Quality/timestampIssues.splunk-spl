@@ -1,4 +1,4 @@
-|tstats count where index=* by index sourcetype _time _indextime 
+|tstats count where index=* by index sourcetype _time _indextime sourcetype
 | eval idxtime=_indextime
 | eval diff=_time-idxtime
 | eval status=case(diff>120,"Futuristic",diff<-120,"Latent",1==1,null())
@@ -6,3 +6,29 @@
 | stats dc(index) as indexesCount dc(sourcetype) as sourcetypeCount sum(count) as totalEvents  by status
 | fieldformat averageTimeDifference=tostring(averageTimeDifference,"duration")
 | addcoltotals indexesCount sourcetypeCount totalEvents label="Total Counts" labelfield=status
+
+| tstats count where index=* by index sourcetype _time _indextime
+| eval idxtime=_indextime
+| eval diff=_time-idxtime
+| eval status=case(diff>120,"Futuristic",diff<-120,"Latent",1==1,null())
+| where isnotnull(status)
+| stats values(status) as status by index sourcetype
+
+
+
+index="be_batch_process" source="/tmp/log/gpmt_worker_ch*" OR source="/tmp/log/gpmt_worker_onedebit*" method=post_payment 
+| join type=left left=gpmt right=msg_proc where gpmt.pmt_id=msg_proc.source_id
+[ search index="pd_k8s" sourcetype="kube:container:msgproc-worker*" (source="/var/log/pods/ch*-msgproc-worker*" OR source="/var/log/pods/onedebit-msgproc-worker*") event_data  BPMT pmt_info  
+| rex "\'source_id\'\: (?<source_id>\d+)"
+| rex "\'msg_id\'\: \'(?<msg_id>\w+)\'" 
+| rex field=source "/var/log/pods/(?<core>\w+)-msgproc-worker*"
+| dedup msg_event_id 
+| eval msg_proc_time=_time]
+| rename msg_proc.msg_proc_time as _time
+| rename msg_proc.core as core
+| bucket _time span=1s
+| stats count as tps by _time, core
+| where tps > 200
+
+index="be_batch_process" source="/tmp/log/gpmt_worker_ch*" OR source="/tmp/log/gpmt_worker_onedebit*" method=post_payment 
+ 

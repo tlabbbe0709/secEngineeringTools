@@ -8,5 +8,7 @@
 | rest /servicesNS/-/-/saved/searches splunk_server=*
 | rename eai:acl.* as *
 | search disabled=0 is_scheduled=1
-| stats dc(title) as searchCount values(title) as searches by cron_schedule
+| stats dc(title) as searchCount values(title) as title values(app) as app by cron_schedule
+| stats sum(searchCount) by title app cron_schedule
+| sort -searchCount +app
 | sort 10 - count

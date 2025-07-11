@@ -1,0 +1,42 @@
+| rest splunk_server=local /services/data/props/calcfields ``` First step is to Pull down All Calculated Fields ``` 
+| rename eai:acl.* as *
+| table updated author app sharing type stanza attribute field_name value
+| rex field=attribute "EVAL-(?<field_name>.*)" ``` This regex is used to extract the Field Names. There is a version for each field pulled ```
+| append
+[| rest splunk_server=local /services/data/props/extractions ``` Next step appends the extractions ```
+| rename eai:acl.* as *
+| rex field=value max_match=100 "\?\<(?<field_name>[^\<\s\>]+)\>"
+| eval field_name = if(type="Uses transform", ltrim(split(value,",")), field_name) ``` labels the Tranforms ```
+| table updated author app sharing type stanza attribute field_name value
+| mvexpand field_name]
+| append
+[| rest splunk_server=local /services/data/props/fieldaliases  ``` This append pulls down all aliased Fields ```
+| rename eai:acl.* as *
+| table updated author app sharing stanza type attribute value
+| rex field=value max_match=100 "(?<orig_field>[^\,\s]+)(?i)\s+(?<overwrite>(as|as new|asnew))\s+(?<field_name>[^\,\s]+)(\s+|\,|$)" ``` This regex pulls down the original field, if the field is being over written, and the new field name  ```
+| eval temp = mvzip(orig_field, mvzip(overwrite, field_name)) ``` This calc uses the multi value zip function to stitch together multiple fields for further formatting ```
+| mvexpand temp ``` creates a event for each original field overwrite config and field name ```
+| eval temp=split(temp,",")
+| eval orig_field=mvindex(temp,0), overwrite=if(match(lower(mvindex(temp,1)), "(asnew|as new)"), "false", "true"), field_name=mvindex(temp,2) ``` creates fields for original field overwrite config and field name ```
+| table updated author app sharing stanza type attribute value field_name, orig_field overwrite ]
+| append
+[| rest services/configs/conf-props splunk_server=local ``` This portion appends the sourcetype stanza, the Transforms, or Props it's in ```
+| rename eai:acl.* as *, title as stanza, KV_MODE as value
+| eval type="Automatic Field Extractions", attribute="KV_MODE"
+| eventstats values(value) as value by stanza
+| dedup stanza app
+| table updated author app type sharing stanza attribute value
+| fillnull value value="auto"]
+| append
+[| rest splunk_server=local /services/data/props/lookups ``` The Final append attaches the automatic lookups applied ```
+| rename eai:acl.* as *
+| table updated author app sharing type stanza transform attribute value
+| rex field=value "(?i)(?<orig_field>.*)\s+(OUTPUT|OUTPUT NEW|OUTPUTNEW)\s+(?<field_name>.*)"  ``` This pulls down the original and new field name ```
+| eval orig_field=split(orig_field, " "), field_name=split(field_name," ")
+| mvexpand orig_field
+| mvexpand field_name
+| eval field_name=trim(replace(field_name,",","")), orig_field=trim(replace(orig_field,",",""))
+]
+| eval searchtime_OoO = case(type="Inline",1, type="Uses transform", 2, type="Automatic Field Extractions", 3, type="FIELDALIAS", 4, type="EVAL", 5, type="LOOKUP", 6) ```Calc is used to show what order they are applied in at search time ```
+| table updated app author sharing searchtime_OoO type field_name stanza attribute value orig_field overwrite transform
+| search stanza="*SOURCETYPE*" field_name="FIELD"
