@@ -1,0 +1,11 @@
+| rest /services/configs/conf-risk_factors
+| search disabled=0
+| fields condition_type conditions description operation_group title value
+|  rename value as factor
+| spath input=conditions output=condition_item path={}
+| mvexpand condition_item
+| spath input=condition_item
+| eval risk_factor=case(operation_group="mult","x" + factor,operation_group="add","+" + factor)
+| eval condition=case(comparator IN ("equal","regex"),field + "=" + value, comparator="notequal",field + "!=" + value,comparator="like", field + " like " + value, comparator="greaterequal",field + ">=" + value, comparator="greater", field + ">" + value, comparator="lowerequal",field + "<=" + value, comparator="lower", field + "<" + value)
+| stats values(condition) as condition by title description condition_type risk_factor value_type
+| eval condition=mvjoin(condition," AND ")

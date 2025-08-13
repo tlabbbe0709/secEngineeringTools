@@ -39,4 +39,4 @@
 ]
 | eval searchtime_OoO = case(type="Inline",1, type="Uses transform", 2, type="Automatic Field Extractions", 3, type="FIELDALIAS", 4, type="EVAL", 5, type="LOOKUP", 6) ```Calc is used to show what order they are applied in at search time ```
 | table updated app author sharing searchtime_OoO type field_name stanza attribute value orig_field overwrite transform
-| search stanza="*SOURCETYPE*" field_name="FIELD"
+| search author=

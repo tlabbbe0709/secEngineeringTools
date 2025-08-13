@@ -1,0 +1,36 @@
+(index=_introspection sourcetype=splunk_resource_usage data.search_props.sid::* data.search_props.mode!=RT data.search_props.user!="splunk-system-user" host=sh-*) OR (index=_audit sourcetype=audittrail action=search user!=splunk-system-user total_run_time=* host=sh-*)
+    | eval sid = coalesce('data.search_props.sid', search_id)
+    | eval mem_used = if(index="_introspection", 'data.mem_used', null())
+    | eval pct_memory = if(index="_introspection", 'data.pct_memory', null())
+    | eval app = if(index="_introspection", 'data.search_props.app', null())
+    | eval label = if(index="_introspection", 'data.search_props.label', null())
+    | eval type = if(index="_introspection", 'data.search_props.type', null())
+    | eval mode = if(index="_introspection", 'data.search_props.mode', null())
+    | eval user = if(index="_introspection", 'data.search_props.user', null())
+    | eval role = if(index="_introspection", 'data.search_props.role', null())
+    | eval provenance = if(index="_introspection", 'data.search_props.provenance', null())
+    | eval search_head = if(index="_introspection", 'data.search_props.search_head', null())
+    | eval dns_alt_name = if(index="_introspection", 'dns_alt_name', null())
+    | eval _time = if(index="_introspection", '_time', null())
+    | eval host = if(index="_introspection", 'host', null())
+    | eval runtime = if(index="_audit", total_run_time, null())
+    | eval sid = trim(sid, "'")
+    | stats max(mem_used) as mem_used, max(pct_memory) as pct_memory, values(app) as app, values(label) as label, values(type) as type, values(mode) as mode, values(user) as user, values(role) as role, values(provenance) as provenance, values(search_head) as search_head, values(dns_alt_name) as dns_alt_name, earliest(_time) as _time, values(host) as host, max(runtime) as runtime, count(eval(index="_introspection")) as introspection_count by sid
+    | where introspection_count > 0
+    | eval label = if(isnotnull(label), label, "")
+    | eval search_label = if('label'!="", 'label', 'sid')
+    | eval provenance = if(isnotnull(provenance), provenance, "unknown")
+    | eval instance = case(isnotnull(dns_alt_name), dns_alt_name,isnull(null),host)
+    | stats max(mem_used) as mem_used, max(pct_memory) as pct_memory, max(runtime) as runtime, earliest(_time) as _time by search_label, provenance, type, mode, app, role, user, instance
+    | sort 20 - pct_memory, runtime
+    | eval mem_used = round(mem_used, 2)
+    | eval pct_memory = round(pct_memory, 2)
+    | eval runtime = if(isnotnull(runtime), tostring(round(runtime, 2), "duration"), "In Progress")
+    | fields search_label, instance,app, user, provenance, pct_memory, runtime, _time, type, mode
+    | eval _time = strftime(_time,"%+")
+    | rename search_label as Name, provenance as Provenance, pct_memory as "Percentage Memory Used", instance as Instance, runtime as "Search Duration", _time as "Earliest Seen", type as Type, mode as Mode, app as App, user as User
+    | appendpipe˜
+            [ stats count
+            | eval Name="data unavailable"
+            | where count==0
+            | table Name ]

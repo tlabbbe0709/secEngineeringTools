@@ -1,0 +1,6 @@
+|rest /servicesNS/-/-/saved/searches
+| rename eai:acl.* as * 
+| search dispatch.earliest_time="rt"
+| fields app title owner search
+
+| rest /services/search/jobs | search eventSorting=realtime

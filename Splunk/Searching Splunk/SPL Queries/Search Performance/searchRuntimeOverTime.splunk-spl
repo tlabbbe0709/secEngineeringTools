@@ -1,0 +1,3 @@
+(index=_audit savedsearch_name!="" info=completed) OR (index=_internal sourcetype=scheduler) 
+| stats  count as totalCount values(status) as status values(user) as user values(reason) as skippedReason values(total_run_time) by  savedsearch_name _time
+| search savedsearch_name="DMC Asset - Build Standalone Asset Table"

@@ -1,0 +1,14 @@
+| rest /servicesNS/-/-/saved/searches splunk_server=*
+| rename title as search_name owner as search_owner author as search_author app as search_app
+| fields search_name search search_owner search_author search_app
+| rex field=search max_match=0 "\`(?<macro>[^\`]+)\`\s" 
+| where NOT match(macro,"\"\..+\.") AND NOT match(macro,"comment\(") 
+| where isnotnull(macro) 
+| stats count as total_searches by macro 
+| sort - total_searches 
+| join 
+    [| rest 
+    | rename eai:acl.* as * 
+    | rename title as macro definition as macro_definition arg as macro_arguments owner as macro_owner author as macro_author app as macro_app 
+    | fields macro macro_definition macro_arguments macro_owner macro_author macro_app
+        ]
