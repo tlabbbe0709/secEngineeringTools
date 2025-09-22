@@ -10,6 +10,8 @@ index=_internal source=*metrics.log group=tcpin_connections
 | stats avg(tcp_KBps) sum(tcp_eps) sum(tcp_Kprocessed) sum(kb) by Hour connectType sourceIp sourceHost destPort Indexer Ver
 | fieldformat Hour=strftime(Hour,"%x %H")
 
+
+```Search found on Splunk community, additional comments from that page below```
 ```You could change the stats command if you wanted a slightly different output. For example, replace the last 3 lines with the following to get an overall summary by forwarder, rather than hour by hour statistics:
 
 | stats avg(tcp_KBps) sum(tcp_eps) sum(tcp_Kprocessed) sum(kb) by connectType sourceIp sourceHost destPort Indexer Ver

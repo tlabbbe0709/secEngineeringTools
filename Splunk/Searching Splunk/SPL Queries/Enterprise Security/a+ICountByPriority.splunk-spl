@@ -1,8 +1,10 @@
 | `identities`
+| fillnull priority value="unknown"
 | stats count by priority
 | rename count as identity_count
 | append 
     [| `assets`
+    | fillnull priority value="unknown"
     | stats count by priority
     | rename count as asset_count]
     | stats values(identity_count) as identity_count values(asset_count) as asset_count by priority

@@ -1,0 +1,2 @@
+index=<index> | stats count by tag
+| eval

@@ -1,0 +1,26 @@
+| rest splunk_server=local count=0 /services/saved/searches 
+| search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0
+| rename eai:acl.app as app, title as Detection, action.correlationsearch.label as detection_label, action.notable.param.security_domain as security_domain action.correlationsearch.enabled AS is_detection eai:acl.owner AS owner
+| eval detectionType=case(match(actions,"notable"), "Finding (Notable)", match(actions,"risk"), "Intermediate Finding (Risk Event)",1==1,actions)
+| spath input=action.correlationsearch.annotations
+| spath input=action.risk.param._risk
+| rename *{} as * detectionType as orig_detectionType {}.* as *
+| fields app owner Detection detection_label description orig_detectionType risk_object_field risk_object_type risk_score threat_object_field threat_object_type security_domain analytic_story mitre_attack type cis20 cve kill_chain_phases nist
+| join Detection type=left 
+    [| search `notable` 
+| stats 
+    count by disposition_label search_name urgency status_label 
+| eventstats 
+    sum(count) as urgencyCount by urgency search_name 
+| eventstats 
+    sum(count) as dispositionCount by disposition_label search_name 
+| eventstats 
+    sum(count) as statusCount by status_label search_name
+| eval 
+    urgencySummary = urgency + " - " + urgencyCount, 
+    dispositionSummary = disposition_label + " - " + dispositionCount,
+    statusSummary = status_label + " - " + statusCount 
+| stats values(urgencySummary) as urgencySummary values(dispositionSummary) as dispositionSummary values(statusSummary) as statusSummary sum(count) as total by 
+        search_name
+| rename search_name as Detection]
+| sort -total
