@@ -1,0 +1,45 @@
+index=msad* sourcetype=ActiveDirectory admonEventType!=schema eventtype="admon-user" 
+| rex field=memberOf "CN=(?<mof_parsed>[^,]+)" 
+| rex max_match=5 field=distinguishedName "OU=(?<dn_parsed>[^,]+)" 
+| eval memberOf=lower(replace(mvjoin(mof_parsed, "|"), " ", "_")) 
+| eval category=lower(replace(mvjoin(dn_parsed, "|"), " ", "_")) 
+| eval priority=case(match(category, "domain_admin|disabled|hold|executive") OR match(memberOf, "domain_admin|enterprise_admin|schema_admin|administrator"), "critical", match(category, "contractor|service_account|external"), "high", match(category, "employee|training|user_account|users|administration"), "medium", 1==1, "unknown") 
+| eval startDate=strftime(strptime(whenCreated,"%H:%M.%S %p, %a %m/%d/%Y"), "%m/%d/%Y %H:%M") 
+| eval endDate=strftime(strptime(accountExpires,"%H:%M.%S %p, %a %m/%d/%Y"), "%m/%d/%Y %H:%M") 
+| eval watchlist=if(category IN ("disabled", "hold"), "true", "false") 
+| eval work_city=mvjoin(mvappend(l, st), ", ") 
+| rename 
+    sAMAccountName as identity, 
+    personalTitle as prefix, 
+    displayName as nick, 
+    givenName as first, 
+    sn as last, 
+    mail as email, 
+    telephoneNumber as phone, 
+    mobile as phone2, 
+    manager as managedBy, 
+    department as bunit, 
+    co AS work_country 
+| inputlookup append=true ad_identities.csv
+| stats 
+    first(prefix) as prefix 
+    first(nick) as nick
+    first(first) as first
+    first(last) as last
+    first(suffix) as suffix
+    first(email) as email
+    first(phone) as phone
+    first(phone2) as phone2
+    first(managedBy) as managedBy
+    first(priority) as priority
+    first(bunit) as bunit
+    first(category) as category
+    first(watchlist) as watchlist
+    first(startDate) as startDate
+    first(endDate) as endDate
+    first(work_city) as work_city
+    first(work_country) as work_country
+    first(work_lat) as work_lat
+    first(work_long) as work_long
+    by identity
+| outputlookup ad_identities.csv
