@@ -1,0 +1,30 @@
+index=msad* sourcetype=ActiveDirectory admonEventType!=schema eventtype="admon-computer" 
+| rex max_match=5 field=distinguishedName "OU=(?<dn_parsed>[^,]+)" 
+| eval nt_host=replace(sAMAccountName, "\$", "") 
+| eval dns='dNSHostName' 
+| eval owner='managedBy' 
+| eval bunit_split=split(dn, ",") 
+| eval category=lower(replace(mvjoin(dn_parsed, "|"), " ", "_")) 
+| eval priority=case(match(category, "domain_controller|exchange|citrix"), "critical", match(category, "server|disabled"), "high", match(category, "workstation|desktop|mobile|laptop"), "medium", category IN ("staging", "test"), "low", 1==1, "unknown"), is_expected=if(priority IN ("critical", "high"), "true", "false") 
+| rex field=bunit_split "(OU|CN)=(?<bunit>.+)" 
+| inputlookup append=true ad_assets.csv
+| stats 
+    first(ip) as ip
+    first(mac) as mac
+    first(dns) as dns
+    first(owner) as owner
+    first(priority) as priority
+    first(lat) as lat
+    first(long) as long
+    first(city) as city
+    first(country) as country
+    first(bunit) as bunit
+    first(category) as category
+    first(pci_domain) as pci_domain
+    first(is_expected) as is_expected
+    first(should_timesync) as should_timesync
+    first(should_update) as should_update
+    first(requires_av) as requires_av
+    by nt_host
+| eval in_ad=1
+| outputlookup ad_assets.csv
