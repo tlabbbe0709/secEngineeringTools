@@ -14,3 +14,8 @@
 | stats values(urgencySummary) as "Findings Urgency Summary" values(dispositionSummary) as "Findings Disposition Summary" values(statusSummary) as "Findings Status Summary" sum(count) as "Total Findings" by 
         search_name 
 | rename search_name as Detection
+
+
+```drilldown```
+`notable` 
+| search search_name="<Detection>" disposition_label=“False Positive - *” 

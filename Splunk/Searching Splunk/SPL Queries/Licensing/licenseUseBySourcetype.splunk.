@@ -1,0 +1,15 @@
+index=_internal source=*license_usage.log* type="Usage" earliest=-90d@d
+| eval h=if(len(h)=0 OR isnull(h),"(SQUASHED)",h) 
+| eval s=if(len(s)=0 OR isnull(s),"(SQUASHED)",s) 
+| eval idx=if(len(idx)=0 OR isnull(idx),"(UNKNOWN)",idx) 
+| bin _time span=1d 
+| stats sum(b) as b by _time, host, pool, s, st, h, idx 
+| timechart span=1d sum(b) AS volumeB by st fixedrange=false 
+| join type=outer _time 
+    [ search index=_internal source=*license_usage.log* type="RolloverSummary" earliest=-90d@d * 
+    | eval _time=_time - 43200 
+    | bin _time span=1d 
+    | stats latest(poolsz) AS "pool size" by _time] 
+| fields - _timediff 
+| foreach "*" 
+    [ eval <<FIELD>>=round('<<FIELD>>'/1024/1024/1024, 3)]

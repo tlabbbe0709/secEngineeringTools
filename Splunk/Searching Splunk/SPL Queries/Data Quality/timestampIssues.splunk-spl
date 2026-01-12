@@ -1,4 +1,4 @@
-|tstats count where index=* by index sourcetype _time _indextime sourcetype
+|tstats count where index=* by index _time _indextime sourcetype
 | eval idxtime=_indextime
 | eval diff=_time-idxtime
 | eval status=case(diff>120,"Futuristic",diff<-120,"Latent",1==1,null())

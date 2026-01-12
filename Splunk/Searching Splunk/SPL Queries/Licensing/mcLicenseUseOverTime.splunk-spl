@@ -4,7 +4,7 @@ index=_internal  source=*license_usage.log* type="RolloverSummary" earliest=-30d
 | stats latest(b) AS b by slave, pool, _time 
 | timechart span=1d sum(b) AS "volume" fixedrange=false 
 | join type=outer _time 
-    [ search index=_internal host=splunk-4002.aws.mot-solutions.com source=*license_usage.log* type="RolloverSummary" earliest=-30d@d 
+    [ search index=_internal source=*license_usage.log* type="RolloverSummary" earliest=-30d@d 
     | eval _time=_time - 43200 
     | bin _time span=1d 
     | dedup _time stack 

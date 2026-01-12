@@ -1,0 +1,8 @@
+| rest splunk_server=local count=0 /services/saved/searches
+| search (action.correlationsearch.enabled IN (1, "true") OR actions IN (*notable*, *risk*, *alert_manager*)) AND disabled=0
+| rename eai:acl.* as *
+| rename action.correlationsearch.label as detection_label
+| spath input=action.risk.param._risk
+| rename {}.* as *
+| eval detectionType=case(match(actions,"notable"), "Finding (Notable)", match(actions,"risk"), "Intermediate Finding (Risk Event)",1==1,actions)
+| fields detection_label risk_object_field risk_object_type risk_score threat_object_field threat_object_type

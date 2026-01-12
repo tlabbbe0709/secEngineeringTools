@@ -8,3 +8,4 @@
 | rex field=definition "index(=|\s+=|\s+=\s+|=\s+)(?<index>\w+)" 
 | stats values(title) as macroUsed by index]
 | where isnull(macroUsed)
+
