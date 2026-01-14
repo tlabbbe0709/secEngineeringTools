@@ -1,7 +1,7 @@
 | datamodel Endpoint Services | spath 
-| spath path=objects{}.fields{} output=v 
-| spath path=objects{}.calculations{}.outputFields{} output=u 
-| eval w=mvappend(v,u) 
+| spath path=fields{} output=v
+| spath path=calculations{}.outputFields{} output=u
+| eval w=mvappend(v,u)
 | fields - _raw 
 | fields modelName w
 | mvexpand w 
