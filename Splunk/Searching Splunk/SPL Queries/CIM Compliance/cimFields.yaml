@@ -20,15 +20,14 @@ Network Traffic:
   All_Traffic: 
     All Fields: "action,app,bytes,bytes_in,bytes_out,channel,dest,dest_interface,dest_ip,dest_mac,dest_port,dest_translated_ip,dest_translate_port,dest_zone,direction,duration,dvc,dvc_ip,dvc_mac,dvc_priority,dvc_zone,flow_id,icmp_code,icmp_type,packets,packets_in,packets_out,process_id,protocol,protocol_version,response_time,rule,session_id,src,src_interface"
     Recommended Fields: "action,bytes,bytes_in,bytes_out,dest,dest_port,dvc,rule,src,src_port,transport,user,vendor_product"
-
-
-
 Endpoint:
   Filesystem:
     Fields:
-
 Email:
   All_Email:
     Fields: "action, delay, dest, duration, file_hash, file_name, file_size, internal_message_id, message_id, message_info, orig_dest, orig_recipient, orig_src, process, process_id, protocol, recipient, recipient_count, recipient_domain, recipient_status, response_time, retires, return_addr, size, src, src_user, src_user_domain, status_code, subject, tag, url, user, vendor_product, xdelay, xref"
   Filtering:
     Fields: "filter_action, filter_score, signature, signature_extra, signature_id"
+Web:
+  Web: "action,app,bytes,bytes_in,bytes_out,cached,category,cookie,dest,dest_port,duration,http_content_type,http_method,http_referrer,http_referrer_domain,http_user_agent,http_user_agent_length,response_time,site,src,status,uri_path,uri_query,url,url_domain,url_length,user,vendor_product"
+  Storage: "error_code,operation,storage_name"

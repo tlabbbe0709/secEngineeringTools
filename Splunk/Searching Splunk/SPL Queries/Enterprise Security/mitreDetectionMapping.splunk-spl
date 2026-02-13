@@ -15,4 +15,4 @@ mitre_technique_id=if(NOT match(mitre_annotations,"(T\d+\.\d+|TA\d+)"),mitre_ann
 mitre_sub_techniques=if(match(mitre_annotations,"T\d+\.\d+"),mitre_annotations, null())]
 | eval mitre_tactic=mitre_tactic + " - " + mitre_tactic_id
 | eval mitre_technique=mitre_technique + " - " + mitre_technique_id
-```| stats dc(detection_name) as detectionCount by mitre_tactic```
+| stats dc(detection_name) as detectionCount by mitre_tactic

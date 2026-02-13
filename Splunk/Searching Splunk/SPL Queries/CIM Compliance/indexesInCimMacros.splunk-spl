@@ -6,3 +6,4 @@
 | rex field=indexesUsed "index(=\s|=)(?<index>\w+)"
 | search indexesUsed!="()"
 | stats values(title) by index
+

@@ -9,3 +9,4 @@
 | where percent_coverage<75
 | stats values(field) as field
 | eval field=mvjoin(field,"|")
+

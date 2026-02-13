@@ -1,0 +1,18 @@
+| `assets`
+| eval 
+    category_mvFieldCount = mvcount(category),
+    ip_mvFieldCount = mvcount(ip),
+    mac_mvFieldCount = mvcount(mac),
+    nt_host_mvFieldCount = mvcount(nt_host),
+    dns_mvFieldCount = mvcount(dns)
+| fields asset *mvFieldCount
+| sort - category_mvFieldCount ip_mvFieldCount mac_mvFieldCount nt_host_mvFieldCount dns_mvFieldCount
+
+``` to show counts of assets with count values above limits ```
+| where 
+    category_mvFieldCount > 25 OR
+    ip_mvFieldCount > 25 OR
+    mac_mvFieldCount > 6 OR
+    nt_host_mvFieldCount > 6 OR 
+    dns_mvFieldCount > 6
+| stats count by asset_id *_mvFieldCont

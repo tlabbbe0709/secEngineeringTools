@@ -2,4 +2,4 @@
 | rest /services/messages
 | rename eai:acl.* as * 
 | search app=* author=* 
-| stats coun tby title message severity
+| stats count by title message severity
