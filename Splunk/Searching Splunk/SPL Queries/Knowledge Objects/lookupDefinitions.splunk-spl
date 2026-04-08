@@ -1,0 +1,4 @@
+| rest /servicesNS/-/-/configs/conf-transforms
+| rename eai:acl.* as *
+| fields title app collection filename external_type
+| where isnotnull(collection) OR isnotnull(filename)
