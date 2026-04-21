@@ -2,3 +2,11 @@
 | rename eai:acl.* as *
 | fields title app collection filename external_type
 | where isnotnull(collection) OR isnotnull(filename)
+
+```Show likely local only:
+| rest /servicesNS/-/-/configs/conf-transforms
+| rename eai:acl.* as *
+| where isnotnull(collection) OR isnotnull(filename) 
+| search removable="1"
+| fields title app owner collection filename external_type
+```

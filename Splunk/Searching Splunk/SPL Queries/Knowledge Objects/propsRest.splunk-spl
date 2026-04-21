@@ -1,0 +1,30 @@
+| rest /services/data/props/calcfields 
+| rename eai:acl.* as * 
+| search removable="1" 
+| eval type="calculated_fields"
+| fields type title app owner
+| append 
+    [| rest /services/data/props/extractions 
+    | rename eai:acl.* as * 
+    | search removable="1" 
+    | eval type="field_extractions"
+    | fields type title app owner] 
+| append 
+    [| rest /services/data/props/fieldaliases 
+    | rename eai:acl.* as * 
+    | search removable="1" 
+    | eval type="field_aliases"
+    | fields type title app owner] 
+| append 
+    [| rest /services/data/props/extractions 
+    | rename eai:acl.* as * 
+    | search removable="1" 
+    | eval type="field_extractions"
+    | fields type title app owner] 
+| append 
+    [| rest /services/data/props/sourcetype-rename 
+    | rename eai:acl.* as * 
+    | search removable="1" 
+    | eval type="sourcetype_rename"
+    | fields type title app owner]
+| sort type owner app
