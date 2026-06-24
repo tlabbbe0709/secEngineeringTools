@@ -8,3 +8,9 @@
 Add after line 4 to filter ES only
 | search title=DA-* OR title=SA-* OR title=SplunkEnterpriseSecuritySuite
 ```
+
+| rest splunk_server=* /services/apps/local  
+| fillnull update.version version value="N/A"  
+| eval updateAvailable=if('update.version'="N/A","0","1")
+| search updateAvailable="1"
+| stats values(splunk_server) as instances by title version update.version
